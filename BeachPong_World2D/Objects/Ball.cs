@@ -1,52 +1,56 @@
 ﻿#region Using
 
 using System.Numerics;
-using System.Reflection.Metadata;
 using Emotion.Audio;
 using Emotion.Common;
+using Emotion.Common.Serialization;
+using Emotion.Game.World2D;
+using Emotion.Game.World2D.EditorHelpers;
 using Emotion.Graphics;
 using Emotion.IO;
 using Emotion.Primitives;
 
 #endregion
 
-namespace BeachPong;
+namespace BeachPong_World2D.Objects;
 
-public class Ball : Transform
+public class Ball : GameObject2D
 {
-	public Vector2 Velocity;
+	[DontSerialize] public Vector2 Velocity;
 
-	private GameScene _scene;
+	[AssetFileName] public string? HitWallFx;
+
 	private int _timesJumped;
 
 	private TextureAsset? _beachBall;
 	private Vector2[] _previousPositions = new Vector2[10];
 	private int _previousPositionPointer = 0;
+	private AudioAsset? _hitWallFx;
 
-	public Ball(GameScene scene)
+	public Ball()
 	{
 		Size = new Vector2(16, 16);
-		_scene = scene;
 	}
 
-	public Task LoadAssets()
+	public override async Task LoadAssetsAsync()
 	{
-		return Engine.AssetLoader.GetAsync<TextureAsset>("beach_ball.png").ContinueWith(asset =>
+		var ballAsset = await Engine.AssetLoader.GetAsync<TextureAsset>("beach_ball.png");
+
+		if (ballAsset != null)
 		{
-			if (asset.Result != null)
-			{
-				_beachBall = asset.Result;
-				_beachBall.Texture.Smooth = true;
-			}
-		});
+			ballAsset.Texture.Smooth = true;
+			_beachBall = ballAsset;
+		}
+
+		_hitWallFx = await Engine.AssetLoader.GetAsync<AudioAsset>(HitWallFx);
 	}
 
-	public void Render(RenderComposer c)
+	protected override void RenderInternal(RenderComposer c)
 	{
 		c.RenderSprite(Position, Size, Color.White, _beachBall?.Texture);
 	}
 
-	public void Update()
+	protected override void UpdateInternal(float dt)
 	{
 		// Note: updating the position all at once like this might cause tunneling - as in the
 		// ball might teleport through the paddle. There are better ways of handling this kind of collision,
@@ -54,24 +58,8 @@ public class Ball : Transform
 		const float speed = 0.10f;
 		Position2 += Velocity * (speed + 0.02f * _timesJumped) * Engine.DeltaTime;
 
-		CollideWithPaddle(_scene.LeftPaddle);
-		CollideWithPaddle(_scene.RightPaddle);
-
-		// Collide with the map.
-		Rectangle mapBounds = _scene.MapBounds;
-		if (Center.X < mapBounds.X)
-		{
-			_scene.RightPaddle.Score++;
-			_scene.LeftPaddle.AttachBall(this);
-			_timesJumped = 0;
-		}
-
-		if (Center.X > mapBounds.Right)
-		{
-			_scene.LeftPaddle.Score++;
-			_scene.RightPaddle.AttachBall(this);
-			_timesJumped = 0;
-		}
+		var bbMap = (BeachBallMap) Map;
+		Rectangle mapBounds = bbMap.MapBounds;
 
 		var hitWall = false;
 		if (Center.Y < mapBounds.Y)
@@ -92,15 +80,35 @@ public class Ball : Transform
 			hitWall = true;
 		}
 
-		if (hitWall && _scene.HitWallFx != null)
+		if (hitWall && _hitWallFx != null)
 		{
 			AudioLayer? layer = Engine.Audio.GetLayer("FX");
-			layer.QuickPlay(_scene.HitWallFx);
+			layer.QuickPlay(_hitWallFx);
 		}
 	}
 
-	private void CollideWithPaddle(Paddle paddle)
+	public void CollideWithPaddle(Paddle paddle)
 	{
+		var bbMap = (BeachBallMap) Map;
+		Rectangle mapBounds = bbMap.MapBounds;
+		float direction = paddle.X < mapBounds.Center.X ? 1 : -1;
+
+		// Check if scoring.
+		float scoredDirection = 0;
+		if (Center.X < mapBounds.X)
+			scoredDirection = 1; // Scored right
+		else if (Center.X > mapBounds.Right) scoredDirection = -1; // Scored left
+
+		if (scoredDirection != 0)
+		{
+			if (scoredDirection == direction)
+				paddle.AttachBall(this);
+			else
+				paddle.Score++;
+
+			_timesJumped = 0;
+		}
+
 		if (!Bounds.Intersects(paddle.Bounds)) return;
 
 		const float diagonalVelocityPaddlePercent = 0.05f;
@@ -110,7 +118,6 @@ public class Ball : Transform
 
 		// If the ball hit the upper or lower part 5% of the paddle then
 		// generate vertical velocity for it. This makes the game more interesting.
-		float direction = paddle.X < _scene.MapBounds.Center.X ? 1 : -1;
 		if (Y < upperThreshold)
 			Velocity = new Vector2(direction, -1);
 		else if (Y > lowerThreshold)
@@ -120,15 +127,6 @@ public class Ball : Transform
 
 		Velocity = Vector2.Normalize(Velocity);
 		_timesJumped++;
-
-		if (paddle.HitFx != null)
-		{
-			AudioLayer? layer = Engine.Audio.GetLayer("FX");
-
-			// It is possible for the paddle to collide with the ball multiple times if
-			// moving in the same direction.
-			if (layer.CurrentTrack?.File != paddle.HitFx)
-				layer.QuickPlay(paddle.HitFx);
-		}
+		paddle.Hit();
 	}
 }

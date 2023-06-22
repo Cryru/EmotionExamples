@@ -4,7 +4,7 @@ using Emotion.Common;
 
 #endregion
 
-namespace BeachPong
+namespace BeachPong_World2D
 {
 	public static class Program
 	{
@@ -13,7 +13,7 @@ namespace BeachPong
 			var config = new Configurator
 			{
 				DebugMode = true, // Enables logging in the console and a variety of other functionality.
-				HostTitle = "Beach Pong" // The window name.
+				HostTitle = "Beach Pong (World2D)" // The window name.
 			};
 
 			// First we setup the engine which prepares all modules to be used.
