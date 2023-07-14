@@ -3,6 +3,7 @@
 using BeachPong_World2D.Objects;
 using Emotion.Audio;
 using Emotion.Common;
+using Emotion.Editor;
 using Emotion.Game.World2D;
 using Emotion.Game.World2D.EditorHelpers;
 using Emotion.IO;
@@ -18,11 +19,10 @@ public class BeachBallMap : Map2D
 {
     public Rectangle MapBounds;
 
-    [AssetFileName]
+    [AssetFileName<AudioAsset>]
     public string AmbientMusicFile;
 
     private AudioAsset? _ambientBgm;
-    private bool _ambientTrackPlayed;
 
     protected override async Task PostMapLoad()
     {
@@ -30,10 +30,10 @@ public class BeachBallMap : Map2D
         _ambientBgm = await Engine.AssetLoader.GetAsync<AudioAsset>(AmbientMusicFile);
 
         AudioLayer? bgmLayer = Engine.Audio.CreateLayer("BGM");
-        bgmLayer.VolumeModifier = 0.5f;
+        bgmLayer.VolumeModifier = 0.4f;
 
         AudioLayer? fxLayer = Engine.Audio.CreateLayer("FX");
-        fxLayer.VolumeModifier = 0.25f;
+        fxLayer.VolumeModifier = 0.30f;
 
         if (_ambientBgm != null)
             bgmLayer.AddToQueue(new AudioTrack(_ambientBgm)

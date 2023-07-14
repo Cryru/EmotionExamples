@@ -12,13 +12,13 @@
       <ObjectFlags></ObjectFlags>
       <Position>
         <X>-202.5</X>
-        <Y>-70</Y>
+        <Y>-30</Y>
         <Z>10</Z>
       </Position>
       <HitFx>hit_left.wav</HitFx>
       <PlayerControlled>True</PlayerControlled>
     </GameObject2D>
-    <GameObject2D type="BeachPong_World2D.Objects.BackgroundImage">
+    <GameObject2D type="Emotion.Game.World2D.Objects.StaticTextureAssetObject">
       <ObjectFlags></ObjectFlags>
       <Size>
         <X>640</X>
@@ -31,7 +31,7 @@
       </Position>
       <AssetFile>background_top.png</AssetFile>
     </GameObject2D>
-    <GameObject2D type="BeachPong_World2D.Objects.BackgroundImage">
+    <GameObject2D type="Emotion.Game.World2D.Objects.StaticTextureAssetObject">
       <ObjectFlags></ObjectFlags>
       <Size>
         <X>640</X>
@@ -75,7 +75,7 @@
         <Z>4</Z>
       </Position>
     </GameObject2D>
-    <GameObject2D type="BeachPong_World2D.Objects.BackgroundImage">
+    <GameObject2D type="Emotion.Game.World2D.Objects.StaticTextureAssetObject">
       <ObjectName>Water</ObjectName>
       <ObjectFlags></ObjectFlags>
       <Size>
@@ -89,7 +89,7 @@
       </Position>
       <AssetFile>water.png</AssetFile>
     </GameObject2D>
-    <GameObject2D type="BeachPong_World2D.Objects.BackgroundImage">
+    <GameObject2D type="Emotion.Game.World2D.Objects.StaticTextureAssetObject">
       <ObjectName>Water</ObjectName>
       <ObjectFlags></ObjectFlags>
       <Size>

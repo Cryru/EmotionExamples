@@ -4,13 +4,14 @@ using System.Numerics;
 using Emotion.Audio;
 using Emotion.Common;
 using Emotion.Common.Serialization;
+using Emotion.Editor;
 using Emotion.Game.Time;
 using Emotion.Game.World2D;
-using Emotion.Game.World2D.EditorHelpers;
 using Emotion.Graphics;
 using Emotion.IO;
 using Emotion.Platform.Input;
 using Emotion.Primitives;
+using Emotion.Utility;
 
 #endregion
 
@@ -22,11 +23,17 @@ public class Paddle : GameObject2D
 
 	[DontSerialize] public int Score;
 
-	[AssetFileName] public string? HitFx;
+	[AssetFileName<AudioAsset>]
+	public string? HitFx;
+
+	public float AchieveMaxSpeedOverTime = 200;
+
 	public bool PlayerControlled;
 
+	private Vector3 _startPosition;
 	private AudioAsset? _hitFx;
 	private Vector2 _paddleInput;
+	private float _startMovementTimeStamp;
 
 	public Paddle()
 	{
@@ -41,6 +48,8 @@ public class Paddle : GameObject2D
 	public override void Init()
 	{
 		base.Init();
+
+		_startPosition = Position;
 
 		if (PlayerControlled)
 			Engine.Host.OnKey.AddListener(ProcessInput, KeyListenerType.Game);
@@ -62,6 +71,7 @@ public class Paddle : GameObject2D
 			else if (status == KeyStatus.Up)
 				_paddleInput -= playerInput;
 
+			_startMovementTimeStamp = Engine.TotalTime;
 			return false;
 		}
 
@@ -92,10 +102,14 @@ public class Paddle : GameObject2D
 		float direction = input.Y;
 		const float speed = 0.15f;
 
+		float timeSinceMovementStart = Engine.TotalTime - _startMovementTimeStamp;
+		timeSinceMovementStart /= AchieveMaxSpeedOverTime;
+		float speedMod = Maths.Clamp01(timeSinceMovementStart);
+
 		// The speed signifies how much we want to move in a millisecond.
 		// We then multiply it by Engine.DeltaTime to get how much time has passed since the
 		// last update. This way our movement speed is uncoupled from the game's frame rate.
-		Y += speed * Engine.DeltaTime * direction;
+		Y += speed * speedMod * Engine.DeltaTime * direction;
 
 		var bbMap = (BeachBallMap) Map;
 		Rectangle mapBounds = bbMap.MapBounds;
@@ -109,6 +123,7 @@ public class Paddle : GameObject2D
 		if (_hitFx != null)
 		{
 			AudioLayer? layer = Engine.Audio.GetLayer("FX");
+			if (layer.CurrentTrack?.File == _hitFx) return;
 			layer.QuickPlay(_hitFx);
 		}
 	}
@@ -130,6 +145,12 @@ public class Paddle : GameObject2D
 		float direction = X < mapBounds.Center.X ? 1 : -1;
 		AttachedBall.Velocity = new Vector2(direction, 0);
 		AttachedBall = null;
+	}
+
+	public void ResetToStartPos()
+	{
+		Position = _startPosition;
+		UpdateAttachedBallPos();
 	}
 
 	protected void UpdateAttachedBallPos()
@@ -197,7 +218,10 @@ public class Paddle : GameObject2D
 				Vector2 ballEndPos = newBallPos + ballMovingVector * distanceBallToMe;
 				Vector2 movementVectorToMeet = ballEndPos - Center;
 				if (movementVectorToMeet.Length() > 10)
+				{
+					_startMovementTimeStamp = Engine.TotalTime - AchieveMaxSpeedOverTime;
 					ApplyInput(new Vector2(0, MathF.Sign(movementVectorToMeet.Y)));
+				}
 			}
 		}
 	}

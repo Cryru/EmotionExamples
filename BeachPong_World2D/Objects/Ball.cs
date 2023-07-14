@@ -4,11 +4,13 @@ using System.Numerics;
 using Emotion.Audio;
 using Emotion.Common;
 using Emotion.Common.Serialization;
+using Emotion.Editor;
 using Emotion.Game.World2D;
 using Emotion.Game.World2D.EditorHelpers;
 using Emotion.Graphics;
 using Emotion.IO;
 using Emotion.Primitives;
+using Emotion.Utility;
 
 #endregion
 
@@ -18,13 +20,11 @@ public class Ball : GameObject2D
 {
 	[DontSerialize] public Vector2 Velocity;
 
-	[AssetFileName] public string? HitWallFx;
+	[AssetFileName<AudioAsset>] public string? HitWallFx;
 
 	private int _timesJumped;
 
 	private TextureAsset? _beachBall;
-	private Vector2[] _previousPositions = new Vector2[10];
-	private int _previousPositionPointer = 0;
 	private AudioAsset? _hitWallFx;
 
 	public Ball()
@@ -85,6 +85,29 @@ public class Ball : GameObject2D
 			AudioLayer? layer = Engine.Audio.GetLayer("FX");
 			layer.QuickPlay(_hitWallFx);
 		}
+
+		// Check if scoring.
+		float scoredDirection = 0;
+		if (Center.X < mapBounds.X)
+			scoredDirection = 1; // Scored right
+		else if (Center.X > mapBounds.Right)
+			scoredDirection = -1; // Scored left
+
+		if (scoredDirection != 0)
+		{
+			foreach (Paddle paddle in Map.GetObjectsByType<Paddle>())
+			{
+				float direction = paddle.X < mapBounds.Center.X ? 1 : -1;
+				if (scoredDirection == direction)
+					paddle.AttachBall(this);
+				else
+					paddle.Score++;
+
+				paddle.ResetToStartPos();
+			}
+
+			_timesJumped = 0;
+		}
 	}
 
 	public void CollideWithPaddle(Paddle paddle)
@@ -93,40 +116,27 @@ public class Ball : GameObject2D
 		Rectangle mapBounds = bbMap.MapBounds;
 		float direction = paddle.X < mapBounds.Center.X ? 1 : -1;
 
-		// Check if scoring.
-		float scoredDirection = 0;
-		if (Center.X < mapBounds.X)
-			scoredDirection = 1; // Scored right
-		else if (Center.X > mapBounds.Right) scoredDirection = -1; // Scored left
-
-		if (scoredDirection != 0)
-		{
-			if (scoredDirection == direction)
-				paddle.AttachBall(this);
-			else
-				paddle.Score++;
-
-			_timesJumped = 0;
-		}
-
 		if (!Bounds.Intersects(paddle.Bounds)) return;
 
-		const float diagonalVelocityPaddlePercent = 0.05f;
+		const float diagonalVelocityPaddlePercent = 0.33f;
 		float thresholdSize = paddle.Height * diagonalVelocityPaddlePercent;
 		float upperThreshold = paddle.Y + thresholdSize;
 		float lowerThreshold = paddle.Y + paddle.Height - thresholdSize;
 
-		// If the ball hit the upper or lower part 5% of the paddle then
+		float ballCenterY = Center.Y;
+
+		// If the ball hit the upper or lower part (diagonalVelocityPaddlePercent%) of the paddle then
 		// generate vertical velocity for it. This makes the game more interesting.
-		if (Y < upperThreshold)
+		if (ballCenterY < upperThreshold)
 			Velocity = new Vector2(direction, -1);
-		else if (Y > lowerThreshold)
+		else if (ballCenterY > lowerThreshold)
 			Velocity = new Vector2(direction, 1);
 		else
-			Velocity = new Vector2(direction, 1);
+			Velocity = new Vector2(direction, 0);
 
 		Velocity = Vector2.Normalize(Velocity);
 		_timesJumped++;
+		_timesJumped = Maths.Clamp(_timesJumped, 0, 10);
 		paddle.Hit();
 	}
 }
