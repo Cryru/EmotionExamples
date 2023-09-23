@@ -43,10 +43,10 @@ public class BeachBallMap : Map2D
             });
 
         // Setup map bounds and initial game state.
-        var net = GetObjectByType<VolleyBallNet>();
+        var net = GetFirstObjectOfType<VolleyBallNet>();
         MapBounds = net?.Bounds ?? Rectangle.Empty;
 
-        var ball = GetObjectByType<Ball>();
+        var ball = GetFirstObjectOfType<Ball>();
         if (ball != null)
             foreach (Paddle paddle in GetObjectsByType<Paddle>())
             {
@@ -58,7 +58,7 @@ public class BeachBallMap : Map2D
     {
         base.Update(dt);
 
-        var ball = GetObjectByType<Ball>();
+        var ball = GetFirstObjectOfType<Ball>();
         if (ball == null) return;
 
         foreach (Paddle paddle in GetObjectsByType<Paddle>())

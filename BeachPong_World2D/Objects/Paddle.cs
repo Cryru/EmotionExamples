@@ -174,7 +174,7 @@ public class Paddle : GameObject2D
 	{
 		var bbMap = (BeachBallMap) Map;
 		Rectangle mapBounds = bbMap.MapBounds;
-		var ball = bbMap.GetObjectByType<Ball>();
+		var ball = bbMap.GetFirstObjectOfType<Ball>();
 		if (ball == null) return;
 
 		// The AI has the ball, wait some time before shooting it out.
