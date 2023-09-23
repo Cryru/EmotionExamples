@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Map3D type="MiniCom.MiniComMap">
+  <MapSize>
+    <X>10</X>
+    <Y>10</Y>
+  </MapSize>
+  <MapName>minicom example</MapName>
+  <FileName>game_map.xml</FileName>
+  <PersistentObjects>
+    <BaseGameObject type="Emotion.Game.World3D.Objects.InfiniteGrid">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>346.07278</X>
+        <Y>409.712</Y>
+        <Z>12</Z>
+      </Position>
+      <Offset>
+        <X>2</X>
+        <Y>2</Y>
+      </Offset>
+    </BaseGameObject>
+  </PersistentObjects>
+  <LightModel>
+  </LightModel>
+</Map3D>

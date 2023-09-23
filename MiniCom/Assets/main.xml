@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Map3D type="MiniCom.MiniComMap">
+  <MapSize>
+    <X>10</X>
+    <Y>10</Y>
+  </MapSize>
+  <MapName>minicom example</MapName>
+  <FileName>main.xml</FileName>
+  <PersistentObjects>
+  </PersistentObjects>
+  <LightModel>
+  </LightModel>
+</Map3D>
