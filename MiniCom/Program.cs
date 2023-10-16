@@ -16,7 +16,6 @@ namespace MiniCom
                 HostTitle = "MiniCom"
             };
 
-
             Engine.Setup(config);
             Engine.SceneManager.SetScene(new GameScene());
             Engine.Run();

@@ -1,11 +1,18 @@
 ﻿using Emotion.Common;
+using Emotion.Game.Time;
+using Emotion.Game.Time.Routines;
 using Emotion.Game.World3D;
 using Emotion.Game.World3D.SceneControl;
 using Emotion.Graphics;
 using Emotion.Graphics.Camera;
+using Emotion.Graphics.ThreeDee;
 using Emotion.IO;
+using Emotion.Platform.Input;
 using Emotion.Primitives;
+using Emotion.Testing;
+using Emotion.Utility;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -18,12 +25,56 @@ namespace MiniCom
     {
         public override async Task LoadAsync()
         {
-            var cam3D = new Camera3D(new Vector3(100));
-            cam3D.LookAtPoint(Vector3.Zero);
+            var cam3D = new MiniComCamera(Vector3.Zero);
             Engine.Renderer.Camera = cam3D;
 
             var gameMap = await Engine.AssetLoader.GetAsync<XMLAsset<MiniComMap>>("game_map.xml");
             if (gameMap?.Content != null) await ChangeMapAsync(gameMap.Content);
+
+            Engine.Host.OnKey.AddListener(PlayerInput);
+        }
+
+        public override void Update()
+        {
+            var currentMap = CurrentMap as MiniComMap;
+            if (currentMap != null && currentMap.Initialized && !currentMap.EditorMode)
+            {
+                var player = currentMap.GetObjectByName("Player") as GameObject3D;
+                //player.Position2 += (movementInput * new Vector2(-1, 1) * 0.3f) * Engine.DeltaTime;
+
+                //bool isMoving = movementInput != Vector2.Zero;
+                //if (isMoving && !wasMoving)
+                //{
+                //    player.SetAnimation("Run");
+                //}
+                //else if (!isMoving && wasMoving)
+                //{
+                //    player.SetAnimation("Idle");
+                //}
+                //wasMoving = isMoving;
+
+                var newTileUnderMouse = new Vector2(-1);
+                var mouseRay = Engine.Renderer.Camera.GetCameraMouseRay();
+                var enumerator = currentMap.GetObjectsByType<GroundTile>();
+                while (enumerator.MoveNext())
+                {
+                    var tile = enumerator.Current;
+                    if (mouseRay.IntersectWithObject(tile, out Mesh? _, out Vector3 _, out Vector3 _, out int _))
+                    {
+                        newTileUnderMouse = tile.TileCoord;
+                        break;
+                    }
+                }
+
+                if (newTileUnderMouse != _mouseUnderTile)
+                {
+                    currentMap.TileSelectorMesh.Position = currentMap.TileToWorldPos(newTileUnderMouse);
+                    currentMap.TileSelectorMesh.Z = 10.5f;
+                    _mouseUnderTile = newTileUnderMouse;
+                }
+            }
+
+            base.Update();
         }
 
         public override void Draw(RenderComposer composer)
@@ -34,6 +85,68 @@ namespace MiniCom
             composer.SetUseViewMatrix(true);
 
             base.Draw(composer);
+        }
+
+        private Vector2 _mouseUnderTile;
+
+        private Vector2 movementInput;
+        private bool wasMoving = false;
+
+        private Coroutine _playerAction;
+
+        private bool PlayerInput(Key key, KeyStatus status)
+        {
+            if (_playerAction != null && !_playerAction.Finished) return true;
+
+            Vector2 partOfAxis = Engine.Host.GetKeyAxisPart(key, Key.AxisWASD);
+            if (status == KeyStatus.Down)
+            {
+                movementInput += partOfAxis;
+            }
+            else
+            {
+                movementInput -= partOfAxis;
+            }
+
+            if (key == Key.MouseKeyLeft && status == KeyStatus.Up)
+            {
+                if (_mouseUnderTile != new Vector2(-1))
+                {
+                    _playerAction = Engine.CoroutineManager.StartCoroutine(MovePlayerTo(_mouseUnderTile));
+                }
+            }
+
+            return true;
+        }
+
+        private IEnumerator MovePlayerTo(Vector2 tile)
+        {
+            MiniComMap? map = CurrentMap as MiniComMap;
+            var player = CurrentMap?.GetObjectByName("Player") as GameObject3D;
+            if (player == null) yield break;
+            Assert.NotNull(player);
+
+            var tileWorldPos = map.TileToWorldPos(tile);
+            player.SetAnimation("Run");
+            player.RotateZToFacePoint(tileWorldPos);
+
+            var startingPlace = player.Position;
+            tileWorldPos.Z = startingPlace.Z;
+            while (startingPlace != tileWorldPos)
+            {
+                Vector3 diff = tileWorldPos - player.Position;
+                diff = Vector3.Normalize(diff);
+
+                player.Position += (diff * 0.3f) * Engine.DeltaTime;
+                if ((tileWorldPos - player.Position).Length() < 5f)
+                {
+                    player.Position = tileWorldPos;
+                    break;
+                }
+
+                yield return null;
+            }
+            player.SetAnimation("Idle");
         }
     }
 }

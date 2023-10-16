@@ -1,25 +1,32 @@
 <?xml version="1.0"?>
-<Map3D type="MiniCom.MiniComMap">
+<Object type="MiniCom.MiniComMap">
   <MapSize>
-    <X>10</X>
-    <Y>10</Y>
+    <X>31</X>
+    <Y>31</Y>
   </MapSize>
   <MapName>minicom example</MapName>
   <FileName>game_map.xml</FileName>
   <PersistentObjects>
-    <BaseGameObject type="Emotion.Game.World3D.Objects.InfiniteGrid">
+    <BaseGameObject type="Emotion.Game.World3D.Objects.Quad3D">
+      <Tint>
+        <R>255</R>
+        <B>250</B>
+        <A>255</A>
+      </Tint>
       <ObjectFlags>None</ObjectFlags>
+      <Depth>100</Depth>
+      <Size>
+        <X>100</X>
+        <Y>1</Y>
+      </Size>
       <Position>
-        <X>346.07278</X>
-        <Y>409.712</Y>
-        <Z>12</Z>
+        <X>420.42902</X>
+        <Y>-145.75026</Y>
+        <Z>104.751144</Z>
       </Position>
-      <Offset>
-        <X>2</X>
-        <Y>2</Y>
-      </Offset>
     </BaseGameObject>
   </PersistentObjects>
   <LightModel>
   </LightModel>
-</Map3D>
+  <RenderShadowMap>True</RenderShadowMap>
+</Object>
