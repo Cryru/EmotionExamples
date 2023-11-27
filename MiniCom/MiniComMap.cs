@@ -1,5 +1,6 @@
 ﻿using Emotion.Common;
 using Emotion.Common.Serialization;
+using Emotion.Game.AStar;
 using Emotion.Game.World3D;
 using Emotion.Game.World3D.Objects;
 using Emotion.Primitives;
@@ -17,6 +18,12 @@ namespace MiniCom
         public Vector3 TileSize = new Vector3(80, 80, 1);
 
         [DontSerialize]
+        public PathingGrid PathingGrid;
+
+        [DontSerialize]
+        public AStarContext AStarPathing;
+
+        [DontSerialize]
         public Quad3D TileSelectorMesh;
 
         public Vector3 TileToWorldPos(Vector2 tilePos)
@@ -25,23 +32,33 @@ namespace MiniCom
             return new Vector3(tilePos.X - halfTileSize.X, tilePos.Y - halfTileSize.Y, 5) * TileSize;
         }
 
+        public Vector2 WorldToTilePos(Vector3 worldPos)
+        {
+            var halfTileSize = (MapSize.ToVec3() / 2f).IntCastRound() * TileSize;
+            return ((worldPos + halfTileSize) / TileSize).Floor().ToVec2();
+        }
+
         protected override async Task PostMapLoad()
         {
             RenderShadowMap = true;
 
-            var grid = new InfiniteGrid();
+            var grid = new ThreeDeeSquareGrid();
             grid!.TileSize = TileSize.X;
-            grid.Z = 10.2f;
+            grid.Z = 10.5f;
+            grid.Tint = Color.PrettyPurple;
+            grid.Size3D = (MapSize * TileSize.ToVec2()).ToVec3(1f);
             AddObject(grid);
 
-            GenericObject3D playerCharacter = new GenericObject3D();
-            playerCharacter.EntityPath = "person.em3";
+            Unit playerCharacter = new Unit();
             playerCharacter.ObjectName = "Player";
-            playerCharacter.SetAnimation("Idle");
-            playerCharacter.Position = new Vector3(0, 0, 9f);
+            playerCharacter.Tint = Color.PrettyBlue;
+            playerCharacter.Position = TileToWorldPos(new Vector2(15, 15));
             AddObject(playerCharacter);
-            await AwaitAllObjectsLoaded();
-            playerCharacter.Entity.Forward = new Vector3(0, -1, 0); // todo: add to emotion mesh asset
+
+            Unit enemyCharacter = new Unit();
+            enemyCharacter.ObjectName = "Enemy";
+            enemyCharacter.Position = TileToWorldPos(new Vector2(20, 15));
+            AddObject(enemyCharacter);
 
             for (int x = 0; x < MapSize.X; x++)
             {
@@ -60,6 +77,9 @@ namespace MiniCom
                     AddObject(tile);
                 }
             }
+
+            PathingGrid = new PathingGrid(MapSize, TileSize.ToVec2());
+            AStarPathing = new AStarContext(PathingGrid);
 
             TileSelectorMesh = new Quad3D();
             TileSelectorMesh.Size3D = new Vector3(TileSize.X, TileSize.Y, 1f);

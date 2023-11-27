@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emotion", "..\Emotion\Emoti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachPong_World2D", "BeachPong_World2D\BeachPong_World2D.csproj", "{A24203CE-1457-4E99-918E-7841DDDDE11B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniCom", "MiniCom\MiniCom.csproj", "{15EECD61-DFD9-47E7-A31B-7523400E39D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniCom", "MiniCom\MiniCom.csproj", "{15EECD61-DFD9-47E7-A31B-7523400E39D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExperimentH", "ExperimentH\ExperimentH.csproj", "{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,14 @@ Global
 		{15EECD61-DFD9-47E7-A31B-7523400E39D1}.DebugWeb|Any CPU.Build.0 = Debug|Any CPU
 		{15EECD61-DFD9-47E7-A31B-7523400E39D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15EECD61-DFD9-47E7-A31B-7523400E39D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.DebugUnix64|Any CPU.ActiveCfg = Debug|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.DebugUnix64|Any CPU.Build.0 = Debug|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.DebugWeb|Any CPU.ActiveCfg = Debug|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.DebugWeb|Any CPU.Build.0 = Debug|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

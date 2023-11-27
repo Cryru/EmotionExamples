@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<BaseMap type="Emotion.Game.World2D.Map2D">
+  <MapSize>
+    <X>1</X>
+    <Y>1</Y>
+  </MapSize>
+  <MapName>test</MapName>
+  <FileName>game_map.xml</FileName>
+  <PersistentObjects>
+    <BaseGameObject type="ExperimentH.PlayerUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>-17.5</X>
+        <Y>42</Y>
+      </Position>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.BossUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>-46.5</X>
+        <Y>-141.5</Y>
+      </Position>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.Unit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>-102.5</X>
+        <Y>21.5</Y>
+      </Position>
+    </BaseGameObject>
+  </PersistentObjects>
+</BaseMap>

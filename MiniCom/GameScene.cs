@@ -68,8 +68,8 @@ namespace MiniCom
 
                 if (newTileUnderMouse != _mouseUnderTile)
                 {
-                    currentMap.TileSelectorMesh.Position = currentMap.TileToWorldPos(newTileUnderMouse);
-                    currentMap.TileSelectorMesh.Z = 10.5f;
+                    currentMap.TileSelectorMesh.Position = currentMap.TileToWorldPos(newTileUnderMouse) + new Vector3(1, 1, 0);
+                    currentMap.TileSelectorMesh.Z = 10.25f;
                     _mouseUnderTile = newTileUnderMouse;
                 }
             }
@@ -112,41 +112,14 @@ namespace MiniCom
             {
                 if (_mouseUnderTile != new Vector2(-1))
                 {
-                    _playerAction = Engine.CoroutineManager.StartCoroutine(MovePlayerTo(_mouseUnderTile));
+                    var player = CurrentMap.GetObjectByName("Player") as Unit;
+                    Vector3 tileWorldPos = CurrentMap.TileToWorldPos(_mouseUnderTile);
+
+                    _playerAction = Engine.CoroutineManager.StartCoroutine(player.GoTo(tileWorldPos));
                 }
             }
 
             return true;
-        }
-
-        private IEnumerator MovePlayerTo(Vector2 tile)
-        {
-            MiniComMap? map = CurrentMap as MiniComMap;
-            var player = CurrentMap?.GetObjectByName("Player") as GameObject3D;
-            if (player == null) yield break;
-            Assert.NotNull(player);
-
-            var tileWorldPos = map.TileToWorldPos(tile);
-            player.SetAnimation("Run");
-            player.RotateZToFacePoint(tileWorldPos);
-
-            var startingPlace = player.Position;
-            tileWorldPos.Z = startingPlace.Z;
-            while (startingPlace != tileWorldPos)
-            {
-                Vector3 diff = tileWorldPos - player.Position;
-                diff = Vector3.Normalize(diff);
-
-                player.Position += (diff * 0.3f) * Engine.DeltaTime;
-                if ((tileWorldPos - player.Position).Length() < 5f)
-                {
-                    player.Position = tileWorldPos;
-                    break;
-                }
-
-                yield return null;
-            }
-            player.SetAnimation("Idle");
         }
     }
 }

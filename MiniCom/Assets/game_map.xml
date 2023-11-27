@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Object type="MiniCom.MiniComMap">
+<BaseMap type="MiniCom.MiniComMap">
   <MapSize>
     <X>31</X>
     <Y>31</Y>
@@ -7,26 +7,22 @@
   <MapName>minicom example</MapName>
   <FileName>game_map.xml</FileName>
   <PersistentObjects>
-    <BaseGameObject type="Emotion.Game.World3D.Objects.Quad3D">
-      <Tint>
-        <R>255</R>
-        <B>250</B>
-        <A>255</A>
-      </Tint>
-      <ObjectFlags>None</ObjectFlags>
-      <Depth>100</Depth>
-      <Size>
-        <X>100</X>
-        <Y>1</Y>
-      </Size>
-      <Position>
-        <X>420.42902</X>
-        <Y>-145.75026</Y>
-        <Z>104.751144</Z>
-      </Position>
-    </BaseGameObject>
   </PersistentObjects>
   <LightModel>
+    <AmbientLightStrength>2</AmbientLightStrength>
+    <AmbientLightColor>
+      <R>240</R>
+      <G>220</G>
+      <B>255</B>
+      <A>255</A>
+    </AmbientLightColor>
+    <DiffuseStrength>1</DiffuseStrength>
+    <ShadowOpacity>1</ShadowOpacity>
+    <SunDirection>
+      <X>-0.3</X>
+      <Y>0.25</Y>
+      <Z>0.5</Z>
+    </SunDirection>
   </LightModel>
   <RenderShadowMap>True</RenderShadowMap>
-</Object>
+</BaseMap>
