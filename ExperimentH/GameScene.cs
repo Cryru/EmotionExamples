@@ -4,6 +4,7 @@ using Emotion.Game.World2D.SceneControl;
 using Emotion.Graphics;
 using Emotion.IO;
 using Emotion.Primitives;
+using Emotion.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,20 @@ namespace ExperimentH
 {
     public class GameScene : World2DBaseScene<Map2D>
     {
+        private UIController _ui = null!;
+
         public override async Task LoadAsync()
         {
+            _ui = new UIController();
+
             var gameMap = await Engine.AssetLoader.GetAsync<XMLAsset<Map2D>>("game_map.xml");
             if (gameMap?.Content != null) await ChangeMapAsync(gameMap.Content);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            _ui.Update();
         }
 
         public override void Draw(RenderComposer composer)
@@ -29,6 +40,10 @@ namespace ExperimentH
             composer.SetUseViewMatrix(true);
 
             base.Draw(composer);
+
+            composer.SetUseViewMatrix(false);
+            composer.ClearDepth();
+            _ui.Render(composer);
         }
     }
 }

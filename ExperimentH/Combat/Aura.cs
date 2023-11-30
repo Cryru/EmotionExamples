@@ -10,6 +10,8 @@ namespace ExperimentH.Combat
         public int Duration = 1;
         public int TimeBetweenTicks = 1;
 
+        public int TimePassed { get; protected set; }
+
         public Unit Caster;
         public Unit OnUnit;
 
@@ -46,6 +48,7 @@ namespace ExperimentH.Combat
                 if (OnUnit.IsDead()) yield break;
                 TickAuraInternal();
                 yield return new After(TimeBetweenTicks);
+                TimePassed += TimeBetweenTicks;
             }
             OnUnit.RemoveAura(this);
         }

@@ -1,4 +1,5 @@
 ﻿using Emotion.Common;
+using Emotion.Game.Time;
 using Emotion.Game.World2D;
 using Emotion.Graphics;
 using Emotion.Platform.Input;
@@ -25,6 +26,9 @@ namespace ExperimentH
         private Ability _healTouch;
         private Ability _lifebloom;
 
+        private Action? _queuedAbility;
+        private After? _queueTime;
+
         public PlayerUnit()
         {
             Tint = Color.PrettyPurple;
@@ -47,7 +51,10 @@ namespace ExperimentH
         protected override void UpdateInternal(float dt)
         {
             base.UpdateInternal(dt);
-            MoveDirection(_inputDirection, dt);
+            MoveDirection(_inputDirection, SpeedPerMs, dt);
+
+            _queueTime?.Update(dt);
+            _queuedAbility?.Invoke();
 
             _targetUnderMouse = null;
             var mouseWorld = Engine.Renderer.Camera.ScreenToWorld(Engine.Host.MousePosition);
@@ -70,7 +77,7 @@ namespace ExperimentH
 
             if (_targetUnderMouse != null && !_targetUnderMouse.IsDead())
             {
-                c.RenderCircleOutline(_targetUnderMouse.Center.ToVec3(100), _targetUnderMouse.Height, Color.Cyan, true);
+                c.RenderCircleOutline(_targetUnderMouse.Center.ToVec3(100), _targetUnderMouse.Height / 2f, Color.Cyan, true);
             }
         }
 
@@ -90,19 +97,47 @@ namespace ExperimentH
             {
                 if (key == Key.Num1)
                 {
-                    _rejuv.ExecuteAbility(this, _targetUnderMouse);
+                    InputUseAbility(_rejuv, _targetUnderMouse);
                 }
                 else if (key == Key.Num2)
                 {
-                    _healTouch.ExecuteAbility(this, _targetUnderMouse);
+                    InputUseAbility(_healTouch, _targetUnderMouse);
                 }
                 else if (key == Key.Num3)
                 {
-                    _lifebloom.ExecuteAbility(this, _targetUnderMouse);
+                    InputUseAbility(_lifebloom, _targetUnderMouse);
                 }
             }
 
             return true;
+        }
+
+        public void InputUseAbility(Ability ability, Unit target)
+        {
+            if (CanUseAbility(ability, target) == AbilityReason.OnCooldown)
+            {
+                _queueTime = new After(400, () =>
+                {
+                    _queuedAbility = null;
+                    _queueTime = null;
+                });
+                _queuedAbility = () =>
+                {
+                    if (UseAbility(ability, target))
+                    {
+                        _queuedAbility = null;
+                        _queueTime = null;
+                    }
+                };
+                return;
+            }
+            else
+            {
+                _queuedAbility = null;
+                _queueTime = null;
+            }
+
+            UseAbility(ability, target);
         }
     }
 }

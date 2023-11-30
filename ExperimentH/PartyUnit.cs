@@ -1,5 +1,8 @@
 ﻿using Emotion.Common;
+using Emotion.Game;
 using Emotion.Game.Time.Routines;
+using Emotion.Graphics;
+using Emotion.Primitives;
 using ExperimentH.Combat;
 using ExperimentH.CombatScript;
 using System;
@@ -18,7 +21,7 @@ namespace ExperimentH
 
         public PartyUnit()
         {
-            _genericAttack = new MeleeAttack(400);
+            _genericAttack = new MeleeAttack(500);
             Strength = 24;
             _abilities.Add(_genericAttack);
         }
@@ -43,7 +46,7 @@ namespace ExperimentH
             // No enemy on map.
             if (enemy == null) return null;
 
-            return Engine.CoroutineManager.StartCoroutine(AIBehaviorUseAbility(_genericAttack, enemy));
+            return Engine.CoroutineManager.StartCoroutine(AIBehaviorFightTarget(enemy));
         }
     }
 }

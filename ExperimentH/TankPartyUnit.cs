@@ -1,4 +1,6 @@
-﻿using Emotion.Primitives;
+﻿using Emotion.Game.Time.Routines;
+using Emotion.Primitives;
+using ExperimentH.CombatScript;
 using System;
 using System.Collections.Generic;
 
@@ -13,8 +15,11 @@ namespace ExperimentH
         public TankPartyUnit()
         {
             Tint = Color.Red;
-            Hp = 300;
-            Armor = 5;
+            Hp = 350;
+            Armor = 10;
+            Strength = 10;
+
+            _abilities.Add(new TankShield());
         }
     }
 }

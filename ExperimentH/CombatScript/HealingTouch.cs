@@ -11,10 +11,11 @@ namespace ExperimentH.CombatScript
     {
         public HealingTouch()
         {
-            CastTime = 1500;
+            CastTime = 1000;
+            Range = 99999;
         }
 
-        public override void ExecuteAbilityInternal(Unit caster, Unit target)
+        protected override void ExecuteAbilityInternal(Unit caster, Unit target)
         {
             target.HealDamage(caster, 50);
         }

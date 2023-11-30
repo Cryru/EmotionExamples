@@ -9,11 +9,16 @@ namespace ExperimentH.CombatScript
 {
     public class Rejuvenation : Ability
     {
+        public Rejuvenation()
+        {
+            Range = 99999;
+        }
+
         public class RejuvenationAura : Aura
         {
             public RejuvenationAura()
             {
-                TimeBetweenTicks = 500;
+                TimeBetweenTicks = 700;
                 Duration = 5000;
             }
 
@@ -33,7 +38,7 @@ namespace ExperimentH.CombatScript
             }
         }
 
-        public override void ExecuteAbilityInternal(Unit caster, Unit target)
+        protected override void ExecuteAbilityInternal(Unit caster, Unit target)
         {
             target.ApplyAura(caster, new RejuvenationAura());
         }

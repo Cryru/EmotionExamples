@@ -23,55 +23,47 @@
       </Position>
       <_threatTable>
       </_threatTable>
-      <CurrentHp>10000</CurrentHp>
+      <CurrentHp>15000</CurrentHp>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-59.12</X>
-        <Y>45.5</Y>
+        <X>-54.041824</X>
+        <Y>33.532883</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-31.65</X>
-        <Y>16.05</Y>
+        <X>-28.034836</X>
+        <Y>3.5627832</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>38.83</X>
-        <Y>12.96</Y>
+        <X>34.480515</X>
+        <Y>0.7092128</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>66.16</X>
-        <Y>48.5</Y>
-      </Position>
-      <CurrentHp>100</CurrentHp>
-    </BaseGameObject>
-    <BaseGameObject type="ExperimentH.PartyUnit">
-      <ObjectFlags>None</ObjectFlags>
-      <Position>
-        <X>-230.26</X>
-        <Y>105.01</Y>
+        <X>60.751038</X>
+        <Y>36.67868</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.TankPartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>3.71</X>
-        <Y>-2.7</Y>
+        <X>3.2581604</X>
+        <Y>-15.6921425</Y>
       </Position>
-      <CurrentHp>200</CurrentHp>
+      <CurrentHp>350</CurrentHp>
     </BaseGameObject>
   </PersistentObjects>
 </BaseMap>

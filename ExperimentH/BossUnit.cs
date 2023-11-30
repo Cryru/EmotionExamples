@@ -12,24 +12,25 @@ using System.Threading.Tasks;
 
 namespace ExperimentH
 {
+
     public class BossUnit : Unit
     {
         public List<Unit> _threatTable = new();
 
         private int _currentState = 0;
 
-        private Ability _genericAttack;
-
         public BossUnit()
         {
-            Hp = 10_000;
-            Strength = 50;
+            Hp = 15_000;
+            Strength = 55;
+            AITimeBetweenAbilities = 10000;
 
             Size = new System.Numerics.Vector2(70, 80);
             Tint = new Color(139, 69, 19);
 
-            _genericAttack = new MeleeAttack(1000);
-            _abilities.Add(_genericAttack);
+            _abilities.Add(new MeleeAttack(1000));
+            _abilities.Add(new BossStomp());
+            _abilities.Add(new BossBleed());
         }
 
         protected override Coroutine? GetNextBehavior()
@@ -42,28 +43,15 @@ namespace ExperimentH
 
             if (_currentState == 0)
             {
-                return Engine.CoroutineManager.StartCoroutine(BehaviorAttackTank());
+                return Engine.CoroutineManager.StartCoroutine(AIBehaviorFightTarget(aggroUnit));
             }
 
             return null;
         }
 
-        protected IEnumerator BehaviorAttackTank()
+        public override void TakeDamage(Unit source, float amount, bool canCrit = true)
         {
-            var aggroUnit = GetAggroUnit();
-            while (aggroUnit != null)
-            {
-                yield return AIBehaviorUseAbility(_genericAttack, aggroUnit, 1);
-                if (IsDead()) yield break;
-
-                yield return null;
-                aggroUnit = GetAggroUnit();
-            }
-        }
-
-        public override void TakeDamage(Unit source, float amount)
-        {
-            base.TakeDamage(source, amount);
+            base.TakeDamage(source, amount, canCrit);
 
             if (!_threatTable.Contains(source))
             {

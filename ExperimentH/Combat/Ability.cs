@@ -1,16 +1,19 @@
 ﻿using Emotion.Common;
 using Emotion.Game.Time;
 using Emotion.Game.Time.Routines;
+using Emotion.Testing;
 using System.Collections;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace ExperimentH.Combat
 {
     public abstract class Ability
     {
-        public int Range;
+        public int Range = 1;
         public int Cooldown;
         public int CastTime;
+        public bool ActiveGlobalCooldown = true;
 
         protected Coroutine? _cooldownRoutine;
 
@@ -23,13 +26,19 @@ namespace ExperimentH.Combat
             return dist < Range;
         }
 
-        public void ExecuteAbility(Unit caster, Unit target)
+        public void ExecuteAbilityInner(Unit caster, Unit target)
         {
             ExecuteAbilityInternal(caster, target);
-            _cooldownRoutine = Engine.CoroutineManager.StartCoroutine(RunCooldown());
+            StartCooldown();
         }
 
-        public abstract void ExecuteAbilityInternal(Unit caster, Unit target);
+        protected abstract void ExecuteAbilityInternal(Unit caster, Unit target);
+
+        protected void StartCooldown()
+        {
+            Debug.Assert(!IsOnCooldown());
+            _cooldownRoutine = Engine.CoroutineManager.StartCoroutine(RunCooldown());
+        }
 
         private IEnumerator RunCooldown()
         {
@@ -40,5 +49,19 @@ namespace ExperimentH.Combat
         {
             return _cooldownRoutine != null && !_cooldownRoutine.Finished;
         }
+
+        #region AI
+
+        public virtual bool CheckAICondition(Unit user, Unit target)
+        {
+            return true;
+        }
+
+        public virtual Unit GetAITarget(Unit user, Unit currentTarget)
+        {
+            return currentTarget;
+        }
+
+        #endregion
     }
 }

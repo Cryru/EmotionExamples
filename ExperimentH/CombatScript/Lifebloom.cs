@@ -6,12 +6,17 @@ namespace ExperimentH.CombatScript
     {
         private LifebloomAura? _lastAuraApplied;
 
+        public Lifebloom()
+        {
+            Range = 99999;
+        }
+
         public class LifebloomAura : Aura
         {
             public LifebloomAura()
             {
                 TimeBetweenTicks = 1000;
-                Duration = 10000;
+                Duration = 15000;
             }
 
             protected override void OnApply()
@@ -30,7 +35,7 @@ namespace ExperimentH.CombatScript
             }
         }
 
-        public override void ExecuteAbilityInternal(Unit caster, Unit target)
+        protected override void ExecuteAbilityInternal(Unit caster, Unit target)
         {
             // Can be active only on one unit.
             if (_lastAuraApplied != null && _lastAuraApplied.IsActive())
