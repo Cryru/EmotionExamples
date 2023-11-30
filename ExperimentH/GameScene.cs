@@ -24,7 +24,7 @@ namespace ExperimentH
         public override void Draw(RenderComposer composer)
         {
             composer.SetUseViewMatrix(false);
-            composer.RenderSprite(Vector3.Zero, composer.CurrentTarget.Size, Color.CornflowerBlue);
+            composer.RenderSprite(Vector3.Zero, composer.CurrentTarget.Size, Color.PrettyGreen);
             composer.ClearDepth();
             composer.SetUseViewMatrix(true);
 

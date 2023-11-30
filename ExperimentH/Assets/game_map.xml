@@ -10,23 +10,68 @@
     <BaseGameObject type="ExperimentH.PlayerUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-17.5</X>
-        <Y>42</Y>
+        <X>3</X>
+        <Y>53.5</Y>
       </Position>
+      <CurrentHp>100</CurrentHp>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.BossUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-46.5</X>
-        <Y>-141.5</Y>
+        <X>0.5</X>
+        <Y>-55</Y>
       </Position>
+      <_threatTable>
+      </_threatTable>
+      <CurrentHp>10000</CurrentHp>
     </BaseGameObject>
-    <BaseGameObject type="ExperimentH.Unit">
+    <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-102.5</X>
-        <Y>21.5</Y>
+        <X>-59.12</X>
+        <Y>45.5</Y>
       </Position>
+      <CurrentHp>100</CurrentHp>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.PartyUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>-31.65</X>
+        <Y>16.05</Y>
+      </Position>
+      <CurrentHp>100</CurrentHp>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.PartyUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>38.83</X>
+        <Y>12.96</Y>
+      </Position>
+      <CurrentHp>100</CurrentHp>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.PartyUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>66.16</X>
+        <Y>48.5</Y>
+      </Position>
+      <CurrentHp>100</CurrentHp>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.PartyUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>-230.26</X>
+        <Y>105.01</Y>
+      </Position>
+      <CurrentHp>100</CurrentHp>
+    </BaseGameObject>
+    <BaseGameObject type="ExperimentH.TankPartyUnit">
+      <ObjectFlags>None</ObjectFlags>
+      <Position>
+        <X>3.71</X>
+        <Y>-2.7</Y>
+      </Position>
+      <CurrentHp>200</CurrentHp>
     </BaseGameObject>
   </PersistentObjects>
 </BaseMap>
