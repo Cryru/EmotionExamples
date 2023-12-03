@@ -37,7 +37,7 @@ namespace ExperimentH
 
         protected Coroutine? _behaviorRoutine = null;
         protected List<Ability> _abilities = new List<Ability>();
-        protected List<Aura> _auras = new List<Aura>();
+        public List<Aura> _auras = new List<Aura>();
         protected List<FloatingText> _floatingTexts = new List<FloatingText>();
         private List<Action<RenderComposer, Unit>> _drawables = new();
 
@@ -114,11 +114,8 @@ namespace ExperimentH
                 drawable(c, this);
             }
 
-            var abovePoint = Center - new Vector2(0, (Height / 2f) + 6);
-            var hpBarSize = new Vector2(Width + Width * 0.8f, 5);
+            
 
-            var barRect = new Rectangle(0, 0, hpBarSize);
-            barRect.Center = abovePoint;
 
             for (int i = 0; i < _floatingTexts.Count; i++)
             {
@@ -135,48 +132,22 @@ namespace ExperimentH
                     FontAsset.GetDefaultBuiltIn().GetAtlas(8), null, Emotion.Graphics.Text.FontEffect.Outline, 0.6f, Color.Black * opacity);
             }
 
-            float hpPercent = CurrentHp / (float)Hp;
-            if (hpPercent > 0)
-            {
-                RenderBar(c, barRect, Color.Green, hpPercent);
-            }
 
-            float spaceBetweenBars = -(barRect.Height + 2);
-            float extraBarPen = spaceBetweenBars;
 
-            if (_castTimer != null)
-            {
-                RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.Yellow, _castTimer.Progress);
-                extraBarPen += spaceBetweenBars;
-            }
+            //float spaceBetweenBars = -(barRect.Height + 2);
+            //float extraBarPen = spaceBetweenBars;
 
-            if (!_globalCooldown.Finished && this is PlayerUnit)
-            {
-                RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.White, _globalCooldown.Progress);
-                extraBarPen += spaceBetweenBars;
-            }
+            //if (_castTimer != null)
+            //{
+            //    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.Yellow, _castTimer.Progress);
+            //    extraBarPen += spaceBetweenBars;
+            //}
 
-            for (int i = 0; i < _auras.Count; i++)
-            {
-                var aura = _auras[i];
-                float progress = 1.0f - ((float)aura.TimePassed / aura.Duration);
-
-                if (aura is Lifebloom.LifebloomAura)
-                {
-                    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.PrettyPurple, progress);
-                    extraBarPen += spaceBetweenBars;
-                }
-                else if (aura is Rejuvenation.RejuvenationAura)
-                {
-                    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.PrettyPink, progress);
-                    extraBarPen += spaceBetweenBars;
-                }
-                else if (aura is BossBleed.BossBleedAura)
-                {
-                    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.Red, progress);
-                    extraBarPen += spaceBetweenBars;
-                }
-            }
+            //if (!_globalCooldown.Finished && this is PlayerUnit)
+            //{
+            //    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.White, _globalCooldown.Progress);
+            //    extraBarPen += spaceBetweenBars;
+            //}
         }
 
         #region Movement and Collision
@@ -475,6 +446,8 @@ namespace ExperimentH
 
         public void ApplyAura(Unit caster, Aura aura)
         {
+            if (this.IsDead()) return;
+
             for (int i = 0; i < _auras.Count; i++)
             {
                 var existingAura = _auras[i];

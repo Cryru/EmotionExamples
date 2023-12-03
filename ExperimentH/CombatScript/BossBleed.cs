@@ -12,6 +12,7 @@ namespace ExperimentH
             CastTime = 4000;
             Cooldown = 10000;
             Range = 50;
+            Icon = "Icons/DoT.png";
             StartCooldown();
         }
 
@@ -21,6 +22,7 @@ namespace ExperimentH
             {
                 TimeBetweenTicks = 1000;
                 Duration = 15000;
+                Icon = "Icons/DoT.png";
             }
 
             protected override void OnApply()
@@ -35,7 +37,7 @@ namespace ExperimentH
 
             protected override void TickAuraInternal()
             {
-                OnUnit.TakeDamage(Caster, 12, false);
+                OnUnit.TakeDamage(Caster, 15, false);
             }
         }
 

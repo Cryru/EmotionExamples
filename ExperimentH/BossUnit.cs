@@ -1,12 +1,16 @@
 ﻿using Emotion.Common;
 using Emotion.Game.Time.Routines;
+using Emotion.Graphics;
+using Emotion.IO;
 using Emotion.Primitives;
 using ExperimentH.Combat;
 using ExperimentH.CombatScript;
+using Silk.NET.Core.Native;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,6 +83,45 @@ namespace ExperimentH
             }
 
             return null;
+        }
+
+        protected override void RenderInternal(RenderComposer c)
+        {
+            base.RenderInternal(c);
+
+            var abovePoint = Center - new Vector2(0, (Height / 2f) + 6);
+            var hpBarSize = new Vector2(Width + Width * 0.8f, 5);
+
+            var barRect = new Rectangle(0, 0, hpBarSize);
+            barRect.Center = abovePoint;
+
+            float spaceBetweenBars = -(barRect.Height + 2);
+            float extraBarPen = spaceBetweenBars;
+
+            float hpPercent = CurrentHp / (float)Hp;
+            if (hpPercent > 0)
+            {
+                RenderBar(c, barRect, Color.Green, hpPercent);
+            }
+
+            for (int i = 0; i < _auras.Count; i++)
+            {
+                var aura = _auras[i];
+                float progress = 1.0f - ((float)aura.TimePassed / aura.Duration);
+
+                if (!string.IsNullOrEmpty(aura.Icon))
+                {
+                    var auraIcon = Engine.AssetLoader.Get<TextureAsset>(aura.Icon);
+                    auraIcon.Texture.Smooth = true;
+                    c.RenderSprite(barRect.Position + new Vector2(extraBarPen, -8), new Vector2(8), Color.White, auraIcon.Texture);
+                }
+                else
+                {
+                    c.RenderSprite(barRect.Position + new Vector2(extraBarPen, -8), new Vector2(8), Color.PrettyPink);
+                }
+
+                extraBarPen += 9;
+            }
         }
     }
 }

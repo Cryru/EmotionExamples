@@ -20,8 +20,6 @@ namespace ExperimentH
     {
         private Vector2 _inputDirection;
 
-        private Unit? _targetUnderMouse;
-
         private Ability _rejuv;
         private Ability _healTouch;
         private Ability _lifebloom;
@@ -41,6 +39,11 @@ namespace ExperimentH
         {
             Engine.Host.OnKey.AddListener(PlayerInput);
             base.Init();
+
+            if (Map is GameMap gameMap)
+            {
+                gameMap.AddHealthBarToPartyUI(this);
+            }
         }
 
         public override void Destroy()
@@ -56,7 +59,7 @@ namespace ExperimentH
             _queueTime?.Update(dt);
             _queuedAbility?.Invoke();
 
-            _targetUnderMouse = null;
+            Unit targetUnderMouse = null;
             var mouseWorld = Engine.Renderer.Camera.ScreenToWorld(Engine.Host.MousePosition);
             var objs = new List<GameObject2D>();
             Map.GetObjects(objs, 0, new Circle(mouseWorld.ToVec2(), 1f));
@@ -65,7 +68,7 @@ namespace ExperimentH
                 var obj = objs[i];
                 if (obj is Unit unit && !unit.IsDead() && unit is not BossUnit)
                 {
-                    _targetUnderMouse = unit;
+                    targetUnderMouse = unit;
                     break;
                 }
             }
@@ -75,10 +78,10 @@ namespace ExperimentH
         {
             base.RenderInternal(c);
 
-            if (_targetUnderMouse != null && !_targetUnderMouse.IsDead())
-            {
-                c.RenderCircleOutline(_targetUnderMouse.Center.ToVec3(100), _targetUnderMouse.Height / 2f, Color.Cyan, true);
-            }
+            //if (_targetUnderMouse != null && !_targetUnderMouse.IsDead())
+            //{
+            //    c.RenderCircleOutline(_targetUnderMouse.Center.ToVec3(100), _targetUnderMouse.Height / 2f, Color.Cyan, true);
+            //}
         }
 
         protected bool PlayerInput(Key key, KeyStatus status)
@@ -93,19 +96,25 @@ namespace ExperimentH
                 return false;
             }
 
-            if (status == KeyStatus.Up && _targetUnderMouse != null)
+            Unit? uiTargetUnit = null;
+            if (Map is GameMap gm)
+            {
+                uiTargetUnit = gm.UIUnitTarget;
+            }
+
+            if (status == KeyStatus.Up && uiTargetUnit != null)
             {
                 if (key == Key.Num1)
                 {
-                    InputUseAbility(_rejuv, _targetUnderMouse);
+                    InputUseAbility(_rejuv, uiTargetUnit);
                 }
                 else if (key == Key.Num2)
                 {
-                    InputUseAbility(_healTouch, _targetUnderMouse);
+                    InputUseAbility(_healTouch, uiTargetUnit);
                 }
                 else if (key == Key.Num3)
                 {
-                    InputUseAbility(_lifebloom, _targetUnderMouse);
+                    InputUseAbility(_lifebloom, uiTargetUnit);
                 }
             }
 

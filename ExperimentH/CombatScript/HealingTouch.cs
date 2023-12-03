@@ -13,6 +13,7 @@ namespace ExperimentH.CombatScript
         {
             CastTime = 1000;
             Range = 99999;
+            Icon = "Icons/HolyLight.png";
         }
 
         protected override void ExecuteAbilityInternal(Unit caster, Unit target)

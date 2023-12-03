@@ -17,6 +17,7 @@ namespace ExperimentH
             CastTime = 2000;
             Cooldown = 10000;
             Range = 100;
+            Icon = "Icons/Stomp.png";
             StartCooldown();
         }
 
@@ -69,7 +70,7 @@ namespace ExperimentH
                     var obj = objs[i];
                     if (obj is Unit u && obj != caster && !u.IsDead())
                     {
-                        u.TakeDamage(caster, 17, false);
+                        u.TakeDamage(caster, 15, false);
                     }
                 }
                 

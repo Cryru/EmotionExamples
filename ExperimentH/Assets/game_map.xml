@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<BaseMap type="Emotion.Game.World2D.Map2D">
+<BaseMap type="ExperimentH.GameMap">
   <MapSize>
     <X>1</X>
     <Y>1</Y>
@@ -13,7 +13,9 @@
         <X>3</X>
         <Y>53.5</Y>
       </Position>
-      <CurrentHp>100</CurrentHp>
+      <CurrentHp>250</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.BossUnit">
       <ObjectFlags>None</ObjectFlags>
@@ -24,46 +26,58 @@
       <_threatTable>
       </_threatTable>
       <CurrentHp>15000</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-54.041824</X>
-        <Y>33.532883</Y>
+        <X>-52.47931</X>
+        <Y>29.850687</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>-28.034836</X>
-        <Y>3.5627832</Y>
+        <X>-26.922478</X>
+        <Y>-0.27943712</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>34.480515</X>
-        <Y>0.7092128</Y>
+        <X>33.142204</X>
+        <Y>-3.0602598</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.PartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>60.751038</X>
-        <Y>36.67868</Y>
+        <X>59.086746</X>
+        <Y>33.04135</Y>
       </Position>
       <CurrentHp>100</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
     <BaseGameObject type="ExperimentH.TankPartyUnit">
       <ObjectFlags>None</ObjectFlags>
       <Position>
-        <X>3.2581604</X>
-        <Y>-15.6921425</Y>
+        <X>3.1191328</X>
+        <Y>-19.689724</Y>
       </Position>
       <CurrentHp>350</CurrentHp>
+      <_auras>
+      </_auras>
     </BaseGameObject>
   </PersistentObjects>
 </BaseMap>

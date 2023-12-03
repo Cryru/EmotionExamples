@@ -26,6 +26,16 @@ namespace ExperimentH
             _abilities.Add(_genericAttack);
         }
 
+        public override void Init()
+        {
+            base.Init();
+
+            if (Map is GameMap gameMap)
+            {
+                gameMap.AddHealthBarToPartyUI(this);
+            }
+        }
+
         protected override Coroutine? GetNextBehavior()
         {
             var baseBehavior = base.GetNextBehavior();

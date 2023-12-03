@@ -9,6 +9,7 @@ namespace ExperimentH.Combat
     {
         public int Duration = 1;
         public int TimeBetweenTicks = 1;
+        public string Icon;
 
         public int TimePassed { get; protected set; }
 

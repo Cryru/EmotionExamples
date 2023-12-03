@@ -14,6 +14,7 @@ namespace ExperimentH.Combat
         public int Cooldown;
         public int CastTime;
         public bool ActiveGlobalCooldown = true;
+        public string Icon;
 
         protected Coroutine? _cooldownRoutine;
 

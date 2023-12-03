@@ -12,6 +12,7 @@ namespace ExperimentH.CombatScript
         public Rejuvenation()
         {
             Range = 99999;
+            Icon = "Icons/Rejuv.png";
         }
 
         public class RejuvenationAura : Aura
@@ -20,6 +21,7 @@ namespace ExperimentH.CombatScript
             {
                 TimeBetweenTicks = 700;
                 Duration = 5000;
+                Icon = "Icons/Rejuv.png";
             }
 
             protected override void OnApply()

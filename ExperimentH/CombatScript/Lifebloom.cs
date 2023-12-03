@@ -9,29 +9,31 @@ namespace ExperimentH.CombatScript
         public Lifebloom()
         {
             Range = 99999;
+            Icon = "Icons/Lifebloom.png";
         }
 
         public class LifebloomAura : Aura
         {
             public LifebloomAura()
             {
-                TimeBetweenTicks = 1000;
+                TimeBetweenTicks = 700;
                 Duration = 15000;
+                Icon = "Icons/Lifebloom.png";
             }
 
             protected override void OnApply()
             {
-                OnUnit.Armor += 5;
+                OnUnit.Armor += 10;
             }
 
             protected override void OnRemove()
             {
-                OnUnit.Armor -= 5;
+                OnUnit.Armor -= 10;
             }
 
             protected override void TickAuraInternal()
             {
-                OnUnit.HealDamage(Caster, 35);
+                OnUnit.HealDamage(Caster, 30);
             }
         }
 

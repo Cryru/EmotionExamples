@@ -8,6 +8,7 @@ namespace ExperimentH.CombatScript
         public TankShield()
         {
             Cooldown = 30000;
+            Icon = "Icons/TankShield.png";
         }
 
         public class TankShieldAura : Aura
@@ -15,7 +16,8 @@ namespace ExperimentH.CombatScript
             public TankShieldAura()
             {
                 Duration = 4000;
-                TimeBetweenTicks = 5000;
+                TimeBetweenTicks = Duration;
+                Icon = "Icons/TankShield.png";
             }
 
             protected override void OnApply()
