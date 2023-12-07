@@ -36,14 +36,18 @@ namespace ExperimentH
         protected After? _aiTimeBetweenAbilitiesCooldown;
 
         protected Coroutine? _behaviorRoutine = null;
-        protected List<Ability> _abilities = new List<Ability>();
+        public List<Ability> _abilities = new List<Ability>();
         public List<Aura> _auras = new List<Aura>();
-        protected List<FloatingText> _floatingTexts = new List<FloatingText>();
-        private List<Action<RenderComposer, Unit>> _drawables = new();
+
+        public float GlobalCooldownProgress { get => _globalCooldown.Progress; }
+        public float CastProgress { get => _castTimer?.Progress ?? 0f; }
 
         private After _globalCooldown = new After(500);
         private After? _castTimer;
         private Action? _onCastCallback;
+
+        private Ability? _lastAbilityUsed;
+        private int _lastAbilityTimesUsed;
 
         public Unit()
         {
@@ -84,70 +88,11 @@ namespace ExperimentH
             {
                 _behaviorRoutine = GetNextBehavior();
             }
-
-            for (int i = _floatingTexts.Count - 1; i >= 0; i--)
-            {
-                var text = _floatingTexts[i];
-                text.Timer.Update(dt);
-                if (text.Timer.Finished)
-                {
-                    _floatingTexts.Remove(text);
-                }
-            }
         }
 
-        protected void RenderBar(RenderComposer c, Rectangle barRect, Color color, float progress)
+        public virtual void RenderShadow(RenderComposer c)
         {
-            c.RenderSprite(barRect.Position + new Vector2(0.5f), barRect.Size - new Vector2(1f), new Color(32, 32, 32));
-            c.RenderSprite(barRect.Position + new Vector2(0.5f), barRect.Size * new Vector2(progress, 1f) - new Vector2(1f), color);
-            c.RenderOutline(barRect, Color.Black);
-        }
-
-        protected override void RenderInternal(RenderComposer c)
-        {
-            c.RenderEllipse(Position.ToVec2().ToVec3(-5), new Vector2(Width, 3f), Color.Black * 0.3f, true);
-            c.RenderSprite(Bounds.PositionZ(Z), Size, Tint);
-
-            for (int i = 0; i < _drawables.Count; i++)
-            {
-                var drawable = _drawables[i];
-                drawable(c, this);
-            }
-
-            
-
-
-            for (int i = 0; i < _floatingTexts.Count; i++)
-            {
-                var textInstance = _floatingTexts[i];
-
-                float y = 30 * textInstance.Timer.Progress;
-                float opacity = 1f;
-                if (textInstance.Timer.Progress > 0.5f)
-                {
-                    opacity = 1.0f - ((textInstance.Timer.Progress - 0.5f) / 0.5f);
-                }
-
-                c.RenderString(textInstance.Position - new Vector3(0, y, 0), textInstance.Color * opacity, textInstance.Text,
-                    FontAsset.GetDefaultBuiltIn().GetAtlas(8), null, Emotion.Graphics.Text.FontEffect.Outline, 0.6f, Color.Black * opacity);
-            }
-
-
-
-            //float spaceBetweenBars = -(barRect.Height + 2);
-            //float extraBarPen = spaceBetweenBars;
-
-            //if (_castTimer != null)
-            //{
-            //    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.Yellow, _castTimer.Progress);
-            //    extraBarPen += spaceBetweenBars;
-            //}
-
-            //if (!_globalCooldown.Finished && this is PlayerUnit)
-            //{
-            //    RenderBar(c, barRect + new Rectangle(0, extraBarPen, 0, 0), Color.White, _globalCooldown.Progress);
-            //    extraBarPen += spaceBetweenBars;
-            //}
+            c.RenderEllipse(Position.ToVec2().ToVec3(-5), new Vector2(Width, Width * 0.33f), Color.Black * 0.3f, true);
         }
 
         #region Movement and Collision
@@ -164,6 +109,7 @@ namespace ExperimentH
                 var obj = _list[i];
                 if (obj == thisObj) continue;
                 if (obj is Unit u && u.IsDead()) continue;
+                if (obj is AoEEffectUnit) continue;
 
                 var bounds = obj.Bounds.Inflate(1, 1);
 
@@ -285,7 +231,8 @@ namespace ExperimentH
 
                         if (!ability.CheckAICondition(this, target)) continue;
 
-                        if (CanUseAbility(ability, target) == AbilityReason.CanUse)
+                        if (CanUseAbility(ability, target) == AbilityReason.CanUse &&
+                                (_lastAbilityUsed != ability || _lastAbilityTimesUsed < 2))
                         {
                             abilityUsed = true;
                             usableAbilities.Add((ability, target));
@@ -294,9 +241,7 @@ namespace ExperimentH
 
                     if (usableAbilities.Count > 0)
                     {
-                        var abilityIdx = Helpers.GenerateRandomNumber(0, usableAbilities.Count - 1);
-                        var abilityPair = usableAbilities[abilityIdx];
-
+                        var abilityPair = Helpers.GetRandomArrayItem(usableAbilities);
                         UseAbility(abilityPair.Item1, abilityPair.Item2);
                         if (_castTimer != null) yield return new PassiveRoutineObserver(_castTimer); // Wait for cast.
                     }
@@ -311,7 +256,7 @@ namespace ExperimentH
                 // This will also move the boss towards the aggro unit.
                 if (!abilityUsed)
                 {
-                    yield return AIBehaviorAccomodateAndUseAbility(genericAttack, aggroTarget);
+                    yield return AIBehaviorAccommodateAndUseAbility(genericAttack, aggroTarget);
                 }
 
                 if (IsDead() || aggroTarget.IsDead()) yield break;
@@ -319,7 +264,7 @@ namespace ExperimentH
             }
         }
 
-        private IEnumerator AIBehaviorAccomodateAndUseAbility(Ability ability, Unit target)
+        private IEnumerator AIBehaviorAccommodateAndUseAbility(Ability ability, Unit target)
         {
             if (IsDead() || target.IsDead()) yield break;
 
@@ -350,7 +295,7 @@ namespace ExperimentH
         {
             if (IsDead())
             {
-                return Engine.CoroutineManager.StartCoroutine(BehaviorDead());
+                return Map.CoroutineManager!.StartCoroutine(BehaviorDead());
             }
 
             return null;
@@ -374,8 +319,14 @@ namespace ExperimentH
 
         public void SetCustomBehavior(IEnumerator behavior)
         {
-            Engine.CoroutineManager.StopCoroutine(_behaviorRoutine);
-            _behaviorRoutine = Engine.CoroutineManager.StartCoroutine(behavior);
+            Map.CoroutineManager!.StopCoroutine(_behaviorRoutine);
+            _behaviorRoutine = Map.CoroutineManager.StartCoroutine(behavior);
+        }
+
+        public override void Destroy()
+        {
+            Map.CoroutineManager.StopCoroutine(_behaviorRoutine);
+            base.Destroy();
         }
 
         #endregion
@@ -408,7 +359,8 @@ namespace ExperimentH
 
             if (damage < 0) return;
 
-            AddFloatingText($"-{damage:0}", source, this, source is PartyUnit ? Color.White : Color.PrettyRed);
+            var map = Map as GameMap;
+            map?.AddFloatingText($"-{damage:0}", source, this, source is PartyUnit ? Color.White : Color.PrettyRed);
 
             CurrentHp -= damage;
             if (CurrentHp < 0f)
@@ -436,7 +388,8 @@ namespace ExperimentH
 
             if (amount < 0) return;
 
-            AddFloatingText($"+{amount:0}", this, this, Color.Green);
+            var map = Map as GameMap;
+            map?.AddFloatingText($"+{amount:0}", this, this, Color.Green);
             CurrentHp = Maths.Clamp(CurrentHp + amount, 0, Hp);
         }
 
@@ -446,7 +399,10 @@ namespace ExperimentH
 
         public void ApplyAura(Unit caster, Aura aura)
         {
-            if (this.IsDead()) return;
+            if (IsDead()) return;
+
+            var map = Map as GameMap;
+            if (map == null) return;
 
             for (int i = 0; i < _auras.Count; i++)
             {
@@ -460,7 +416,7 @@ namespace ExperimentH
 
             aura.SetMeta(caster, this);
             _auras.Add(aura);
-            aura.Init();
+            aura.Init(map);
         }
 
         public void RemoveAura(Aura aura)
@@ -473,18 +429,20 @@ namespace ExperimentH
 
         #region Ability API
 
-        public enum AbilityReason
+        public enum AbilityReason : byte
         {
             CanUse,
             OnCooldown,
-            OutOfRange
+            OutOfRange,
+            AlreadyCasting
         }
 
         public AbilityReason CanUseAbility(Ability ability, Unit target)
         {
             if (ability.IsOnCooldown()) return AbilityReason.OnCooldown;
             if (!_globalCooldown.Finished) return AbilityReason.OnCooldown;
-            if (!ability.InRangeToUseAbility(this, target)) return AbilityReason.OutOfRange;
+            if (target != null && !ability.InRangeToUseAbility(this, target)) return AbilityReason.OutOfRange;
+            if (_castTimer != null) return AbilityReason.AlreadyCasting;
 
             return AbilityReason.CanUse;
         }
@@ -493,6 +451,16 @@ namespace ExperimentH
         {
             // Already casting.
             if (_castTimer != null) return false;
+
+            if (_lastAbilityUsed == ability)
+            {
+                _lastAbilityTimesUsed++;
+            }
+            else
+            {
+                _lastAbilityUsed = ability;
+                _lastAbilityTimesUsed = 1;
+            }
 
             // Ability reasons - cooldown, range etc.
             var canUse = CanUseAbility(ability, target);
@@ -514,32 +482,6 @@ namespace ExperimentH
 
             if (ability.ActiveGlobalCooldown) _globalCooldown.Restart();
             return true;
-        }
-
-        #endregion
-
-        #region FX
-
-        public void AddFloatingText(string text, Unit source, Unit target, Color? color)
-        {
-            Vector2 midPoint = target.Bounds.Center - new Vector2(7, 0);
-            if (source != target)
-            {
-                Vector2 dirTowardsSource = Vector2.Normalize(source.Bounds.Center - target.Bounds.Center);
-                midPoint = midPoint + dirTowardsSource * target.Size / 2.3f;
-            }
-
-            _floatingTexts.Add(new FloatingText(text, midPoint.ToVec3(source.Z), color));
-        }
-
-        public void RegisterDrawable(Action<RenderComposer, Unit> drawFunc)
-        {
-            _drawables.Add(drawFunc);
-        }
-
-        public void UnregisterDrawable(Action<RenderComposer, Unit> drawFunc)
-        {
-            _drawables.Remove(drawFunc);
         }
 
         #endregion

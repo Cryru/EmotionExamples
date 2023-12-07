@@ -17,6 +17,9 @@ namespace ExperimentH.Combat
         public string Icon;
 
         protected Coroutine? _cooldownRoutine;
+        protected After? _cooldownTimer;
+
+        public float CooldownProgress { get => _cooldownTimer?.Progress ?? 1f; }
 
         public bool InRangeToUseAbility(Unit user, Unit other)
         {
@@ -43,7 +46,8 @@ namespace ExperimentH.Combat
 
         private IEnumerator RunCooldown()
         {
-            yield return new After(Cooldown);
+            _cooldownTimer = new After(Cooldown);
+            yield return _cooldownTimer;
         }
 
         public bool IsOnCooldown()

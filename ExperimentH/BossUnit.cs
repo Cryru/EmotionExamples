@@ -21,8 +21,6 @@ namespace ExperimentH
     {
         public List<Unit> _threatTable = new();
 
-        private int _currentState = 0;
-
         public BossUnit()
         {
             Hp = 15_000;
@@ -35,6 +33,7 @@ namespace ExperimentH
             _abilities.Add(new MeleeAttack(1000));
             _abilities.Add(new BossStomp());
             _abilities.Add(new BossBleed());
+            _abilities.Add(new BossFireSpit());
         }
 
         protected override Coroutine? GetNextBehavior()
@@ -45,12 +44,7 @@ namespace ExperimentH
             var aggroUnit = GetAggroUnit();
             if (aggroUnit == null) return null;
 
-            if (_currentState == 0)
-            {
-                return Engine.CoroutineManager.StartCoroutine(AIBehaviorFightTarget(aggroUnit));
-            }
-
-            return null;
+            return Engine.CoroutineManager.StartCoroutine(AIBehaviorFightTarget(aggroUnit));
         }
 
         public override void TakeDamage(Unit source, float amount, bool canCrit = true)
@@ -83,6 +77,12 @@ namespace ExperimentH
             }
 
             return null;
+        }
+        protected void RenderBar(RenderComposer c, Rectangle barRect, Color color, float progress)
+        {
+            c.RenderSprite(barRect.Position + new Vector2(0.5f), barRect.Size - new Vector2(1f), new Color(32, 32, 32));
+            c.RenderSprite(barRect.Position + new Vector2(0.5f), barRect.Size * new Vector2(progress, 1f) - new Vector2(1f), color);
+            c.RenderOutline(barRect, Color.Black);
         }
 
         protected override void RenderInternal(RenderComposer c)

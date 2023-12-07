@@ -23,6 +23,7 @@ namespace ExperimentH
         private Ability _rejuv;
         private Ability _healTouch;
         private Ability _lifebloom;
+        private Ability _eflo;
 
         private Action? _queuedAbility;
         private After? _queueTime;
@@ -33,6 +34,12 @@ namespace ExperimentH
             _lifebloom = new Lifebloom();
             _rejuv = new Rejuvenation();
             _healTouch = new HealingTouch();
+            _eflo = new Efflorescence();
+
+            _abilities.Add(_rejuv);
+            _abilities.Add(_healTouch);
+            _abilities.Add(_lifebloom);
+            _abilities.Add(_eflo);
         }
 
         public override void Init()
@@ -43,6 +50,7 @@ namespace ExperimentH
             if (Map is GameMap gameMap)
             {
                 gameMap.AddHealthBarToPartyUI(this);
+                gameMap.AddUnitSkillBar(this);
             }
         }
 
@@ -54,24 +62,10 @@ namespace ExperimentH
         protected override void UpdateInternal(float dt)
         {
             base.UpdateInternal(dt);
-            MoveDirection(_inputDirection, SpeedPerMs, dt);
+            if (!IsDead()) MoveDirection(_inputDirection, SpeedPerMs, dt);
 
             _queueTime?.Update(dt);
             _queuedAbility?.Invoke();
-
-            Unit targetUnderMouse = null;
-            var mouseWorld = Engine.Renderer.Camera.ScreenToWorld(Engine.Host.MousePosition);
-            var objs = new List<GameObject2D>();
-            Map.GetObjects(objs, 0, new Circle(mouseWorld.ToVec2(), 1f));
-            for (int i = 0; i < objs.Count; i++)
-            {
-                var obj = objs[i];
-                if (obj is Unit unit && !unit.IsDead() && unit is not BossUnit)
-                {
-                    targetUnderMouse = unit;
-                    break;
-                }
-            }
         }
 
         protected override void RenderInternal(RenderComposer c)
@@ -102,19 +96,23 @@ namespace ExperimentH
                 uiTargetUnit = gm.UIUnitTarget;
             }
 
-            if (status == KeyStatus.Up && uiTargetUnit != null)
+            if (status == KeyStatus.Up)
             {
-                if (key == Key.Num1)
+                if (key == Key.Num1 && uiTargetUnit != null)
                 {
                     InputUseAbility(_rejuv, uiTargetUnit);
                 }
-                else if (key == Key.Num2)
+                else if (key == Key.Num2 && uiTargetUnit != null)
                 {
                     InputUseAbility(_healTouch, uiTargetUnit);
                 }
-                else if (key == Key.Num3)
+                else if (key == Key.Num3 && uiTargetUnit != null)
                 {
                     InputUseAbility(_lifebloom, uiTargetUnit);
+                }
+                else if (key == Key.Num4)
+                {
+                    InputUseAbility(_eflo, uiTargetUnit);
                 }
             }
 
@@ -125,19 +123,19 @@ namespace ExperimentH
         {
             if (CanUseAbility(ability, target) == AbilityReason.OnCooldown)
             {
-                _queueTime = new After(400, () =>
-                {
-                    _queuedAbility = null;
-                    _queueTime = null;
-                });
-                _queuedAbility = () =>
-                {
-                    if (UseAbility(ability, target))
-                    {
-                        _queuedAbility = null;
-                        _queueTime = null;
-                    }
-                };
+                //_queueTime = new After(400, () =>
+                //{
+                //    _queuedAbility = null;
+                //    _queueTime = null;
+                //});
+                //_queuedAbility = () =>
+                //{
+                //    if (UseAbility(ability, target))
+                //    {
+                //        _queuedAbility = null;
+                //        _queueTime = null;
+                //    }
+                //};
                 return;
             }
             else

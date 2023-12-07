@@ -6,6 +6,20 @@ using Emotion.Common;
 
 namespace ExperimentH
 {
+    // todo:
+    // make boss jump when stomping
+    // fix icons for abilities
+    // cast bar not centered
+    // stomp dot not visible
+    // healing circle duration not visible
+    // pathing problems
+    // balancing problems
+    // tutorial (skill keys on ability icons)
+    // stomp damage is not ellipse but rather circle
+    // split auras into ticking and unticking
+    // convert timers to map timers
+    // do some things need to be coroutines? ex. cooldown timer
+
     public static class Program
     {
         public static void Main(string[] args)

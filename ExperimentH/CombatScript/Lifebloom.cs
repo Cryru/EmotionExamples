@@ -23,17 +23,17 @@ namespace ExperimentH.CombatScript
 
             protected override void OnApply()
             {
-                OnUnit.Armor += 10;
+                OnUnit.Armor += 15;
             }
 
             protected override void OnRemove()
             {
-                OnUnit.Armor -= 10;
+                OnUnit.Armor -= 15;
             }
 
             protected override void TickAuraInternal()
             {
-                OnUnit.HealDamage(Caster, 30);
+                OnUnit.HealDamage(Caster, 15);
             }
         }
 

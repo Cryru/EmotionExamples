@@ -64,8 +64,17 @@ namespace ExperimentH
                 }
             }
 
-            if (validTargets.Count == 0) validTargets = secondaryTargets;
-            if (validTargets.Count == 0) return;
+            // If no valid targets then bleed all invalid ones.
+            // This is to force end when only the tank and healer survive.
+            if (validTargets.Count == 0)
+            {
+                for (int i = 0; i < secondaryTargets.Count; i++)
+                {
+                    var secondaryTarget = secondaryTargets[i];
+                    secondaryTarget.ApplyAura(caster, new BossBleedAura());
+                }
+                return;
+            }
 
             int randomUnit = Helpers.GenerateRandomNumber(0, validTargets.Count - 1);
             var unit = validTargets[randomUnit];

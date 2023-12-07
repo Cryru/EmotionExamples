@@ -23,26 +23,27 @@ namespace ExperimentH
 
         protected override void ExecuteAbilityInternal(Unit caster, Unit target)
         {
-            List<GameObject2D> objs = new List<GameObject2D>(); 
-            caster.Map.GetObjects(objs, 0, new Circle(caster.Position2, Range));
-
-            Engine.CoroutineManager.StartCoroutine(DealDamageCoroutine(caster, objs));
+            caster.Map.CoroutineManager.StartCoroutine(DealDamageCoroutine(caster));
         }
 
-        private IEnumerator DealDamageCoroutine(Unit caster, List<GameObject2D> objs)
+        private IEnumerator DealDamageCoroutine(Unit caster)
         {
             int stompCount = 5;
             int timeBetweenStomps = 1000;
 
+            var map = caster.Map as GameMap;
+
             List<After> stompVisualTimers = new List<After>();
 
-            void RenderVisuals(RenderComposer c, Unit caster)
+            void RenderVisuals(RenderComposer c)
             {
                 for (int i = 0; i < stompVisualTimers.Count; i++)
                 {
                     var stompTimer = stompVisualTimers[i];
                     stompTimer.Update(Engine.DeltaTime);
-                    c.RenderCircle(caster.Position, Range * stompTimer.Progress, new Color(0, 50, 0) * 0.5f * (1.0f - stompTimer.Progress), true);
+
+                    float stompSize = Range * 1.2f;
+                    c.RenderEllipse(caster.Position, new Vector2(stompSize, stompSize * 0.33f) * stompTimer.Progress, new Color(0, 50, 0) * 0.5f * (1.0f - stompTimer.Progress), true);
                 }
             }
 
@@ -51,7 +52,7 @@ namespace ExperimentH
                 stompVisualTimers.Add(new After(timeBetweenStomps * i));
             }
 
-            caster.RegisterDrawable(RenderVisuals);
+            map?.RegisterDrawable(RenderVisuals);
 
             //for (int i = 0; i < objs.Count; i++)
             //{
@@ -65,6 +66,9 @@ namespace ExperimentH
 
             for (int c = 0; c < stompCount; c++)
             {
+                List<GameObject2D> objs = new List<GameObject2D>();
+                caster.Map.GetObjects(objs, 0, new Circle(caster.Position2, Range));
+
                 for (int i = 0; i < objs.Count; i++)
                 {
                     var obj = objs[i];
@@ -73,13 +77,13 @@ namespace ExperimentH
                         u.TakeDamage(caster, 15, false);
                     }
                 }
-                
+
                 yield return new After(timeBetweenStomps);
 
                 if (caster.IsDead()) break;
             }
 
-            caster.UnregisterDrawable(RenderVisuals);
+            map?.UnregisterDrawable(RenderVisuals);
             stompVisualTimers.Clear();
         }
 

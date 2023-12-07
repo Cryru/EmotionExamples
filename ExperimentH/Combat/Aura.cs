@@ -11,23 +11,47 @@ namespace ExperimentH.Combat
         public int TimeBetweenTicks = 1;
         public string Icon;
 
-        public int TimePassed { get; protected set; }
+        public float TimeStampStartedAt;
+
+        public int TimePassed
+        {
+            get
+            {
+                if (_map == null) return 0;
+
+                float currentTime = _map.CoroutineManager.CurrentTime;
+                float timeSinceStart = currentTime - TimeStampStartedAt;
+                if (timeSinceStart > Duration) timeSinceStart = Duration;
+                return (int)timeSinceStart;
+            }
+        }
 
         public Unit Caster;
         public Unit OnUnit;
 
         protected Coroutine? _routine;
+        protected Coroutine _durationRoutine;
+        protected GameMap _map; 
 
-        public void Init()
+        public void Init(GameMap map)
         {
-            _routine = Engine.CoroutineManager.StartCoroutine(AuraCoroutine());
+            _map = map;
+
+            TimeStampStartedAt = map.CoroutineManager.CurrentTime;
+            _routine = map.CoroutineManager.StartCoroutine(TickCoroutine());
+            _durationRoutine = map.CoroutineManager.StartCoroutine(DurationCoroutine());
             OnApply();
         }
 
         public void Dispose()
         {
-            Engine.CoroutineManager.StopCoroutine(_routine);
-            OnRemove();
+            if (!_durationRoutine.Finished && !_durationRoutine.Stopped)
+            {
+                OnRemove();
+            }
+
+            _map.CoroutineManager.StopCoroutine(_routine);
+            _map.CoroutineManager.StopCoroutine(_durationRoutine);
         }
 
         public bool IsActive()
@@ -41,7 +65,7 @@ namespace ExperimentH.Combat
             OnUnit = onUnit;
         }
 
-        public IEnumerator AuraCoroutine()
+        public IEnumerator TickCoroutine()
         {
             int ticks = Duration / TimeBetweenTicks;
             for (int i = 0; i < ticks; i++)
@@ -49,8 +73,12 @@ namespace ExperimentH.Combat
                 if (OnUnit.IsDead()) yield break;
                 TickAuraInternal();
                 yield return new After(TimeBetweenTicks);
-                TimePassed += TimeBetweenTicks;
             }
+        }
+
+        public IEnumerator DurationCoroutine()
+        {
+            yield return new After(Duration);
             OnUnit.RemoveAura(this);
         }
 
