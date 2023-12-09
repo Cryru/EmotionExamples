@@ -19,7 +19,7 @@ namespace ExperimentH.Combat
             {
                 if (_map == null) return 0;
 
-                float currentTime = _map.CoroutineManager.CurrentTime;
+                float currentTime = Engine.TotalTime;
                 float timeSinceStart = currentTime - TimeStampStartedAt;
                 if (timeSinceStart > Duration) timeSinceStart = Duration;
                 return (int)timeSinceStart;
@@ -37,7 +37,7 @@ namespace ExperimentH.Combat
         {
             _map = map;
 
-            TimeStampStartedAt = map.CoroutineManager.CurrentTime;
+            TimeStampStartedAt = Engine.TotalTime;
             _routine = map.CoroutineManager.StartCoroutine(TickCoroutine());
             _durationRoutine = map.CoroutineManager.StartCoroutine(DurationCoroutine());
             OnApply();

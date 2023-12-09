@@ -95,7 +95,7 @@ public class Ball : GameObject2D
 
 		if (scoredDirection != 0)
 		{
-			foreach (Paddle paddle in Map.GetObjectsByType<Paddle>())
+			foreach (Paddle paddle in Map.GetObjects<Paddle>())
 			{
 				float direction = paddle.X < mapBounds.Center.X ? 1 : -1;
 				if (scoredDirection == direction)

@@ -48,7 +48,7 @@ public class BeachBallMap : Map2D
 
         var ball = GetFirstObjectOfType<Ball>();
         if (ball != null)
-            foreach (Paddle paddle in GetObjectsByType<Paddle>())
+            foreach (Paddle paddle in GetObjects<Paddle>())
             {
                 if (paddle.PlayerControlled) paddle.AttachBall(ball);
             }
@@ -61,7 +61,7 @@ public class BeachBallMap : Map2D
         var ball = GetFirstObjectOfType<Ball>();
         if (ball == null) return;
 
-        foreach (Paddle paddle in GetObjectsByType<Paddle>())
+        foreach (Paddle paddle in GetObjects<Paddle>())
         {
             ball.CollideWithPaddle(paddle);
         }
