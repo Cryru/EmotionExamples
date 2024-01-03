@@ -42,7 +42,7 @@ namespace MiniCom
         {
             RenderShadowMap = true;
 
-            var grid = new ThreeDeeSquareGrid();
+            var grid = new SquareGrid3D();
             grid!.TileSize = TileSize.X;
             grid.Z = 10.5f;
             grid.Tint = Color.PrettyPurple;

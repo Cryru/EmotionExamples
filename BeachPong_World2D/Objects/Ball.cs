@@ -30,6 +30,7 @@ public class Ball : GameObject2D
 	public Ball()
 	{
 		Size = new Vector2(16, 16);
+		OriginPos = Emotion.Game.Animation2D.OriginPosition.CenterCenter;
 	}
 
 	public override async Task LoadAssetsAsync()
@@ -47,7 +48,8 @@ public class Ball : GameObject2D
 
 	protected override void RenderInternal(RenderComposer c)
 	{
-		c.RenderSprite(Position, Size, Color.White, _beachBall?.Texture);
+
+		c.RenderSprite(Bounds.PositionZ(Z), Size, Color.White, _beachBall?.Texture);
 	}
 
 	protected override void UpdateInternal(float dt)
@@ -56,7 +58,7 @@ public class Ball : GameObject2D
 		// ball might teleport through the paddle. There are better ways of handling this kind of collision,
 		// some of which are implemented in the Engine, but not within the scope of the example game.
 		const float speed = 0.10f;
-		Position2 += Velocity * (speed + 0.02f * _timesJumped) * Engine.DeltaTime;
+		Position2 += Velocity * (speed + 0.02f * _timesJumped) * dt;
 
 		var bbMap = (BeachBallMap) Map;
 		Rectangle mapBounds = bbMap.MapBounds;

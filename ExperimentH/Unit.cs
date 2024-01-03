@@ -168,7 +168,7 @@ namespace ExperimentH
             var boundCircle = new Circle(Position2, MathF.Max(Width, Height) / 2f);
 
             float amount = speed * dt;
-            var moveResult = Collision.IncrementalGenericSegmentCollision(dir * amount, boundCircle, CollisionTest(this));
+            var moveResult = Collision.GenericSegmentCollision(dir * amount, boundCircle, CollisionTest(this));
 
             if (moveResult.UnobstructedMovement != Vector2.Zero)
             {
@@ -177,7 +177,7 @@ namespace ExperimentH
             }
 
             Vector2 dirPerpen = dir.Perpendicular();
-            moveResult = Collision.IncrementalGenericSegmentCollision(dirPerpen * amount, boundCircle, CollisionTest(this));
+            moveResult = Collision.GenericSegmentCollision(dirPerpen * amount, boundCircle, CollisionTest(this));
             if (moveResult.UnobstructedMovement != Vector2.Zero)
             {
                 Position2 += moveResult.UnobstructedMovement;
@@ -185,7 +185,7 @@ namespace ExperimentH
             }
 
             dirPerpen = -dirPerpen;
-            moveResult = Collision.IncrementalGenericSegmentCollision(dirPerpen * amount, boundCircle, CollisionTest(this));
+            moveResult = Collision.GenericSegmentCollision(dirPerpen * amount, boundCircle, CollisionTest(this));
             if (moveResult.UnobstructedMovement != Vector2.Zero)
             {
                 Position2 += moveResult.UnobstructedMovement;
