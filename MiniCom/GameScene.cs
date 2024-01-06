@@ -55,10 +55,8 @@ namespace MiniCom
 
                 var newTileUnderMouse = new Vector2(-1);
                 var mouseRay = Engine.Renderer.Camera.GetCameraMouseRay();
-                var enumerator = currentMap.GetObjectsByType<GroundTile>();
-                while (enumerator.MoveNext())
+                foreach (var tile in currentMap.ObjectsEnum<GroundTile>())
                 {
-                    var tile = enumerator.Current;
                     if (mouseRay.IntersectWithObject(tile, out Mesh? _, out Vector3 _, out Vector3 _, out int _))
                     {
                         newTileUnderMouse = tile.TileCoord;
@@ -92,11 +90,12 @@ namespace MiniCom
         private Vector2 movementInput;
         private bool wasMoving = false;
 
-        private Coroutine _playerAction;
+        private Coroutine? _playerAction;
 
         private bool PlayerInput(Key key, KeyStatus status)
         {
             if (_playerAction != null && !_playerAction.Finished) return true;
+            if (CurrentMap == null) return true;
 
             Vector2 partOfAxis = Engine.Host.GetKeyAxisPart(key, Key.AxisWASD);
             if (status == KeyStatus.Down)
@@ -112,9 +111,10 @@ namespace MiniCom
             {
                 if (_mouseUnderTile != new Vector2(-1))
                 {
-                    var player = CurrentMap.GetObjectByName("Player") as Unit;
-                    Vector3 tileWorldPos = CurrentMap.TileToWorldPos(_mouseUnderTile);
+                    Unit? player = CurrentMap.GetObjectByName("Player") as Unit;
+                    if (player == null) return true;
 
+                    Vector3 tileWorldPos = CurrentMap.TileToWorldPos(_mouseUnderTile);
                     _playerAction = Engine.CoroutineManager.StartCoroutine(player.GoTo(tileWorldPos));
                 }
             }

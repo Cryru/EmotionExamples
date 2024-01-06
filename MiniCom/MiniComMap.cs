@@ -18,13 +18,13 @@ namespace MiniCom
         public Vector3 TileSize = new Vector3(80, 80, 1);
 
         [DontSerialize]
-        public PathingGrid PathingGrid;
+        public PathingGrid PathingGrid = null!;
 
         [DontSerialize]
-        public AStarContext AStarPathing;
+        public AStarContext AStarPathing = null!;
 
         [DontSerialize]
-        public Quad3D TileSelectorMesh;
+        public Quad3D TileSelectorMesh = null!;
 
         public Vector3 TileToWorldPos(Vector2 tilePos)
         {
