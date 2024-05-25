@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniCom", "MiniCom\MiniCom.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExperimentH", "ExperimentH\ExperimentH.csproj", "{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIExample", "UIExample\UIExample.csproj", "{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,14 @@ Global
 		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.DebugWeb|Any CPU.Build.0 = Debug|Any CPU
 		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.DebugUnix64|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.DebugUnix64|Any CPU.Build.0 = Debug|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.DebugWeb|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.DebugWeb|Any CPU.Build.0 = Debug|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6EF2BDF-F7DC-4DF2-94CA-5441611D1761}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

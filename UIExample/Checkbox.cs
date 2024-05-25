@@ -1,0 +1,108 @@
+﻿#region Using
+
+using Emotion.Game.World.Editor;
+using Emotion.Platform.Input;
+using Emotion.Primitives;
+using Emotion.UI;
+using System.Numerics;
+
+#endregion
+
+#nullable enable
+
+namespace UIExample;
+
+public class Checkbox : UIBaseWindow
+{
+    #region Theme
+
+    public Color NormalColor = Color.PrettyYellow;
+    public Color RolloverColor = new Color("#f7e08f");
+    public Color DisabledColor = new Color("#888888");
+
+    #endregion
+
+    public Action<Checkbox, bool>? OnValueChanged;
+
+    public bool Value
+    {
+        get => _value;
+        set
+        {
+            if (_value == value) return;
+            _value = value;
+            OnValueChanged?.Invoke(this, value);
+
+            UIBaseWindow? checkMark = GetWindowById("Checkmark");
+            if (checkMark != null)
+                checkMark.Visible = value;
+        }
+    }
+
+    private bool _value;
+
+    public Checkbox(bool initialValue)
+    {
+        FillX = false;
+        FillY = false;
+        HandleInput = true;
+
+        Value = initialValue;
+    }
+
+    public override void AttachedToController(UIController controller)
+    {
+        base.AttachedToController(controller);
+
+        var inputBg = new UISolidColor
+        {
+            WindowColor = NormalColor,
+            Anchor = UIAnchor.CenterLeft,
+            ParentAnchor = UIAnchor.CenterLeft,
+            Id = "Background",
+            MinSize = new Vector2(12, 12)
+        };
+        AddChild(inputBg);
+
+        var checkMark = new UITexture
+        {
+            TextureFile = "Editor/Checkmark.png",
+            RenderSize = new Vector2(10, 10),
+            Smooth = true,
+            Visible = _value,
+            WindowColor = Color.Black,
+            Id = "Checkmark",
+            AnchorAndParentAnchor = UIAnchor.CenterCenter
+        };
+        inputBg.AddChild(checkMark);
+    }
+
+    public override void OnMouseEnter(Vector2 _)
+    {
+        base.OnMouseEnter(_);
+
+        UIBaseWindow? bg = GetWindowById("Background");
+        if (bg != null)
+            bg.WindowColor = RolloverColor;
+    }
+
+    public override void OnMouseLeft(Vector2 mousePos)
+    {
+        base.OnMouseLeft(mousePos);
+
+        UIBaseWindow? bg = GetWindowById("Background");
+        if (bg != null)
+            bg.WindowColor = NormalColor;
+    }
+
+    public override bool OnKey(Key key, KeyStatus status, Vector2 mousePos)
+    {
+        if (key == Key.MouseKeyLeft && status == KeyStatus.Down)
+        {
+            Value = !Value;
+            return false;
+        }
+
+        return base.OnKey(key, status, mousePos);
+    }
+}
