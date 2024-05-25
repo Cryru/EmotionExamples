@@ -17,7 +17,7 @@ public class TextButton : UICallbackButton
     #region Theme
 
     public Color NormalColor = Color.PrettyYellow;
-    public Color RolloverColor = new Color("#f7e08f");
+    public Color RolloverColor = new Color("#6da832");
     public Color DisabledColor = new Color("#888888");
 
     #endregion

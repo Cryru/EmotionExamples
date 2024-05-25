@@ -59,7 +59,8 @@ public class UIExampleScene : Scene
             {
                 Engine.Log.Info($"Scroll value is now: {value}!", "Slider");
             },
-            KeepSelectorInside = true
+            KeepSelectorInside = true,
+            RolloverColor = new Color("#6da832")
         };
         listOfControls.AddChild(slider);
 
