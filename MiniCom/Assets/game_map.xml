@@ -8,8 +8,9 @@
   <FileName>game_map.xml</FileName>
   <PersistentObjects>
   </PersistentObjects>
+  <Grids>
+  </Grids>
   <LightModel>
-    <AmbientLightStrength>2</AmbientLightStrength>
     <AmbientLightColor>
       <R>240</R>
       <G>220</G>
@@ -17,12 +18,11 @@
       <A>255</A>
     </AmbientLightColor>
     <DiffuseStrength>1</DiffuseStrength>
-    <ShadowOpacity>1</ShadowOpacity>
+    <ShadowOpacity>0.5</ShadowOpacity>
     <SunDirection>
       <X>-0.3</X>
       <Y>0.25</Y>
       <Z>0.5</Z>
     </SunDirection>
   </LightModel>
-  <RenderShadowMap>True</RenderShadowMap>
 </BaseMap>

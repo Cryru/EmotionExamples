@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeachPong_World2D", "BeachP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniCom", "MiniCom\MiniCom.csproj", "{15EECD61-DFD9-47E7-A31B-7523400E39D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExperimentH", "ExperimentH\ExperimentH.csproj", "{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExperimentH", "ExperimentH\ExperimentH.csproj", "{14C6F511-F5B2-4A0E-867F-99ABE0893B0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

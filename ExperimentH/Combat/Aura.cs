@@ -29,7 +29,7 @@ namespace ExperimentH.Combat
         public Unit Caster;
         public Unit OnUnit;
 
-        protected Coroutine? _routine;
+        protected Coroutine _routine = Coroutine.CompletedRoutine;
         protected Coroutine _durationRoutine;
         protected GameMap _map; 
 
@@ -56,7 +56,7 @@ namespace ExperimentH.Combat
 
         public bool IsActive()
         {
-            return _routine != null && !_routine.Finished && !_routine.Stopped;
+            return _routine.Active;
         }
 
         public void SetMeta(Unit caster, Unit onUnit)

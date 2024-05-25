@@ -1,15 +1,9 @@
-﻿using Emotion.Common;
-using Emotion.Common.Serialization;
+﻿using Emotion.Common.Serialization;
 using Emotion.Game.AStar;
 using Emotion.Game.World3D;
 using Emotion.Game.World3D.Objects;
 using Emotion.Primitives;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MiniCom
 {
@@ -40,8 +34,6 @@ namespace MiniCom
 
         protected override async Task PostMapLoad()
         {
-            RenderShadowMap = true;
-
             var grid = new SquareGrid3D();
             grid!.TileSize = TileSize.X;
             grid.Z = 10.5f;

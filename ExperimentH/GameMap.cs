@@ -63,8 +63,6 @@ namespace ExperimentH
 
         public override void Update(float dt)
         {
-            if (!EditorMode) CoroutineManager!.Update();
-
             for (int i = _floatingTexts.Count - 1; i >= 0; i--)
             {
                 var text = _floatingTexts[i];

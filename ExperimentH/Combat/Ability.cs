@@ -16,7 +16,7 @@ namespace ExperimentH.Combat
         public bool ActiveGlobalCooldown = true;
         public string Icon;
 
-        protected Coroutine? _cooldownRoutine;
+        protected Coroutine _cooldownRoutine = Coroutine.CompletedRoutine;
         protected After? _cooldownTimer;
 
         public float CooldownProgress { get => _cooldownTimer?.Progress ?? 1f; }
@@ -52,7 +52,7 @@ namespace ExperimentH.Combat
 
         public bool IsOnCooldown()
         {
-            return _cooldownRoutine != null && !_cooldownRoutine.Finished;
+            return _cooldownRoutine.Active;
         }
 
         #region AI
